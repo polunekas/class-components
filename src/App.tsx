@@ -2,6 +2,7 @@ import React, { Component, ReactNode } from 'react';
 import './App.css';
 import SearchBar from './components/SearchBar/SearchBar';
 import SearchResults from './components/SearchResults/SearchResults';
+import pikachuGif from './assets/pikachu-pokemon.gif'; // Импортируем гиф
 
 interface Pokemon {
   name: string;
@@ -15,6 +16,7 @@ interface AppState {
   searchItem: string;
   results: Pokemon[];
   error: string | null;
+  showPopup: boolean;
 }
 
 class App extends Component<object, AppState> {
@@ -24,6 +26,7 @@ class App extends Component<object, AppState> {
       searchItem: '',
       results: [],
       error: null,
+      showPopup: false,
     };
   }
 
@@ -55,11 +58,16 @@ class App extends Component<object, AppState> {
               weight: data.weight || 'Not Found',
               abilities: data.abilities
                 ? data.abilities
-                    .map((ability: { ability: { name: string } }) => ability.ability.name)
+                    .map(
+                      (ability: { ability: { name: string } }) =>
+                        ability.ability.name
+                    )
                     .join(', ')
                 : 'Not Found',
               types: data.types
-                ? data.types.map((type: { type: { name: string } }) => type.type.name).join(', ')
+                ? data.types
+                    .map((type: { type: { name: string } }) => type.type.name)
+                    .join(', ')
                 : 'Not Found',
             },
           ]
@@ -82,15 +90,39 @@ class App extends Component<object, AppState> {
     }
   };
 
+  togglePopup = () => {
+    this.setState((prevState) => ({ showPopup: !prevState.showPopup }));
+  };
+
   render(): ReactNode {
     return (
-      <div>
+      <div id="root">
+        <header>
+          <h1>Pokémon Search</h1>
+          <button className="description-button" onClick={this.togglePopup}>
+            How to use
+          </button>
+        </header>
+        {this.state.showPopup && (
+          <>
+            <div className="overlay" onClick={this.togglePopup}></div>
+            <div className="popup">
+              <h2>How to use the search</h2>
+              <p>
+                Type the name of a Pokémon and click "Search" or press Enter.
+              </p>
+              <p>Example: pikachu</p>
+              <button onClick={this.togglePopup}>Close</button>
+            </div>
+          </>
+        )}
         <SearchBar fromSearch={this.handleSearch} />
         {this.state.error ? (
           <p>{this.state.error}</p>
         ) : (
           <SearchResults results={this.state.results} />
         )}
+        <img src={pikachuGif} alt="Pikachu" className="fixed-gif" />
       </div>
     );
   }

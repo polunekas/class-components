@@ -1,4 +1,5 @@
 import React, { Component, ChangeEvent, KeyboardEvent } from 'react';
+import './SearchBar.css';
 
 interface SearchBarProps {
   fromSearch?: (searchItem: string) => void;
@@ -11,9 +12,9 @@ interface SearchBarState {
 class SearchBar extends Component<SearchBarProps, SearchBarState> {
   constructor(props: SearchBarProps) {
     super(props);
-    const savedsearchItem = localStorage.getItem('searchItem') || '';
+    const savedSearchItem = localStorage.getItem('searchItem') || '';
     this.state = {
-      searchItem: savedsearchItem,
+      searchItem: savedSearchItem,
     };
   }
 
@@ -22,11 +23,11 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
   };
 
   handleSearch = () => {
-    const trimmedsearchItem = this.state.searchItem.trim();
-    localStorage.setItem('searchItem', trimmedsearchItem);
+    const trimmedSearchItem = this.state.searchItem.trim();
+    localStorage.setItem('searchItem', trimmedSearchItem);
 
     if (this.props.fromSearch) {
-      this.props.fromSearch(trimmedsearchItem);
+      this.props.fromSearch(trimmedSearchItem);
     }
   };
 
@@ -38,7 +39,7 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
 
   render() {
     return (
-      <div>
+      <div className="search-bar-container">
         <input
           type="text"
           value={this.state.searchItem}

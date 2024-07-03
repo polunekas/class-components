@@ -1,4 +1,5 @@
 import React from 'react';
+import './SearchResults.css';
 
 interface Pokemon {
   name: string;
@@ -14,10 +15,10 @@ interface SearchResultsProps {
 
 const SearchResults: React.FC<SearchResultsProps> = ({ results }) => {
   return (
-    <div>
+    <div className="results-container">
       {results.length > 0 ? (
         results.map((result, index) => (
-          <div key={index}>
+          <div key={index} className="result-item">
             <h3>{result.name[0].toUpperCase() + result.name.slice(1)}</h3>
             <p>Height: {result.height}</p>
             <p>Weight: {result.weight}</p>

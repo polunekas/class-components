@@ -1,0 +1,26 @@
+
+.results-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.result-item {
+  background-color: #fff;
+  border: 2px solid #ffcc00;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 10px;
+  width: 300px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.result-item h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.result-item p {
+  margin: 5px 0;
+}
