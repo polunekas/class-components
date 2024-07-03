@@ -10,5 +10,23 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "exclude": ["node_modules", "**/*.spec.ts"],
+  "import/order": [
+    "error",
+    {
+      "alphabetize": {
+        "order": "ignore",
+        "caseInsensitive": false
+      },
+      "newlines-between": "never",
+      "groups": [
+        "builtin",
+        "external",
+        "internal",
+        "parent",
+        "sibling",
+        "index"
+      ]
+    }
+  ]
 }
