@@ -1,8 +1,10 @@
-
 .results-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 20px;
 }
 
 .result-item {

@@ -28,14 +28,10 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
 
   handleSearch = () => {
     const trimmedSearchItem = this.state.searchItem.trim();
-    if (trimmedSearchItem) {
-      localStorage.setItem('searchItem', trimmedSearchItem);
+    localStorage.setItem('searchItem', trimmedSearchItem);
 
-      if (this.props.fromSearch) {
-        this.props.fromSearch(trimmedSearchItem);
-      }
-    } else {
-      this.setState({ showAlert: true });
+    if (this.props.fromSearch) {
+      this.props.fromSearch(trimmedSearchItem);
     }
   };
 
@@ -73,7 +69,6 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
         />
         <button
           onClick={this.handleSearch}
-          disabled={!this.state.searchItem.trim()}
         >
           Search
         </button>
