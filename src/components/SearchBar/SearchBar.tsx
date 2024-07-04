@@ -7,6 +7,8 @@ interface SearchBarProps {
 
 interface SearchBarState {
   searchItem: string;
+  placeholder: string;
+  showAlert: boolean;
 }
 
 class SearchBar extends Component<SearchBarProps, SearchBarState> {
@@ -15,6 +17,8 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
     const savedSearchItem = localStorage.getItem('searchItem') || '';
     this.state = {
       searchItem: savedSearchItem,
+      placeholder: savedSearchItem ? '' : 'pikachu',
+      showAlert: false,
     };
   }
 
@@ -24,10 +28,14 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
 
   handleSearch = () => {
     const trimmedSearchItem = this.state.searchItem.trim();
-    localStorage.setItem('searchItem', trimmedSearchItem);
+    if (trimmedSearchItem) {
+      localStorage.setItem('searchItem', trimmedSearchItem);
 
-    if (this.props.fromSearch) {
-      this.props.fromSearch(trimmedSearchItem);
+      if (this.props.fromSearch) {
+        this.props.fromSearch(trimmedSearchItem);
+      }
+    } else {
+      this.setState({ showAlert: true });
     }
   };
 
@@ -35,6 +43,20 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
     if (event.key === 'Enter') {
       this.handleSearch();
     }
+  };
+
+  handleFocus = () => {
+    this.setState({ placeholder: '' });
+  };
+
+  handleBlur = () => {
+    if (!this.state.searchItem) {
+      this.setState({ placeholder: 'pikachu' });
+    }
+  };
+
+  closeAlert = () => {
+    this.setState({ showAlert: false });
   };
 
   render() {
@@ -45,8 +67,22 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
           value={this.state.searchItem}
           onChange={this.handleInputChange}
           onKeyPress={this.handleKeyPress}
+          placeholder={this.state.placeholder}
+          onFocus={this.handleFocus}
+          onBlur={this.handleBlur}
         />
-        <button onClick={this.handleSearch}>Search</button>
+        <button
+          onClick={this.handleSearch}
+          disabled={!this.state.searchItem.trim()}
+        >
+          Search
+        </button>
+        {this.state.showAlert && (
+          <div className="alert">
+            <p>Please enter a search term.</p>
+            <button onClick={this.closeAlert}>Close</button>
+          </div>
+        )}
       </div>
     );
   }

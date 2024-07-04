@@ -2,7 +2,8 @@ import React, { Component, ReactNode } from 'react';
 import './App.css';
 import SearchBar from './components/SearchBar/SearchBar';
 import SearchResults from './components/SearchResults/SearchResults';
-import pikachuGif from './assets/pikachu-pokemon.gif'; // Импортируем гиф
+import pikachuGif from './assets/pikachu-pokemon.gif';
+import pokemonHeader from './assets/pokemon_header.png';
 
 interface Pokemon {
   name: string;
@@ -98,7 +99,7 @@ class App extends Component<object, AppState> {
     return (
       <div id="root">
         <header>
-          <h1>Pokémon Search</h1>
+          <img src={pokemonHeader} alt="Pokemon" className="header-logo" />
           <button className="description-button" onClick={this.togglePopup}>
             How to use
           </button>
@@ -112,7 +113,9 @@ class App extends Component<object, AppState> {
                 Type the name of a Pokémon and click "Search" or press Enter.
               </p>
               <p>Example: pikachu</p>
-              <button onClick={this.togglePopup}>Close</button>
+              <button className="close-button" onClick={this.togglePopup}>
+                Close
+              </button>
             </div>
           </>
         )}
