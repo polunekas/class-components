@@ -107,7 +107,7 @@ class App extends Component<object, AppState> {
         {this.state.showPopup && (
           <>
             <div className="overlay" onClick={this.togglePopup}></div>
-            <div className="popup">
+            <div className="popup fadeIn">
               <h2>How to use the search</h2>
               <p>
                 Type the name of a Pokémon and click "Search" or press Enter.

@@ -78,3 +78,20 @@ header {
   height: 200px;
   margin-top: 20px;
 }
+
+.fadeIn {
+  width: max-content;
+  animation-fill-mode: both;
+  animation-name: fadeIn;
+  animation-duration: 700ms;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
