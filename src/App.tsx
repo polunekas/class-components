@@ -3,6 +3,7 @@ import './App.css';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import SearchBar from './components/SearchBar/SearchBar';
 import SearchResults from './components/SearchResults/SearchResults';
+import Loader from './components/Loader/Loader';
 import pikachuGif from './assets/pikachu-pokemon.gif';
 import pokemonHeader from './assets/pokemon_header.png';
 
@@ -18,6 +19,7 @@ interface AppState {
   searchItem: string;
   results: Pokemon[];
   error: string | null;
+  loading: boolean;
   showPopup: boolean;
 }
 
@@ -28,12 +30,13 @@ class App extends Component<object, AppState> {
       searchItem: '',
       results: [],
       error: null,
+      loading: false,
       showPopup: false,
     };
   }
 
   handleSearch = async (searchItem: string) => {
-    this.setState({ searchItem, error: null });
+    this.setState({ searchItem, error: null, loading: true });
 
     try {
       let results: Pokemon[] = [];
@@ -43,7 +46,7 @@ class App extends Component<object, AppState> {
         );
 
         if (!response.ok) {
-          throw new Error(`Error fetching data: ${response.statusText}`);
+          throw new Error(`Error fetching data`);
         }
 
         const data = await response.json();
@@ -77,8 +80,9 @@ class App extends Component<object, AppState> {
         }
 
         const data = await response.json();
-        const pokemonDetailsPromises = data.results.map((pokemon: { name: string; url: string }) =>
-          fetch(pokemon.url).then((response) => response.json())
+        const pokemonDetailsPromises = data.results.map(
+          (pokemon: { name: string; url: string }) =>
+            fetch(pokemon.url).then((response) => response.json())
         );
 
         const detailedData = await Promise.all(pokemonDetailsPromises);
@@ -103,25 +107,28 @@ class App extends Component<object, AppState> {
         }));
       }
 
-      this.setState({ results }, () => {
+      this.setState({ results, loading: false }, () => {
         if (searchItem) {
           const foundIndex = results.findIndex(
             (pokemon) => pokemon.name === searchItem.toLowerCase()
           );
           if (foundIndex !== -1) {
-            document.querySelector('.results-container')?.scrollTo({
-              top: foundIndex * 100,
-              behavior: 'smooth',
-            });
+            const container = document.querySelector('.results-container');
+            if (container) {
+              container.scrollTo({
+                top: foundIndex * 100,
+                behavior: 'smooth',
+              });
+            }
           }
         }
       });
     } catch (error) {
       console.error(error);
       if (error instanceof Error) {
-        this.setState({ error: error.message });
+        this.setState({ error: error.message, loading: false });
       } else {
-        this.setState({ error: 'An unknown error occurred' });
+        this.setState({ error: 'An unknown error occurred', loading: false });
       }
     }
   };
@@ -145,7 +152,9 @@ class App extends Component<object, AppState> {
               <div className="overlay" onClick={this.togglePopup}></div>
               <div className="popup fadeIn">
                 <h2>How to use the search</h2>
-                <p>Type the name of a Pokémon and click "Search" or press Enter.</p>
+                <p>
+                  Type the name of a Pokémon and click "Search" or press Enter.
+                </p>
                 <p>Example: pikachu</p>
                 <button className="close-button" onClick={this.togglePopup}>
                   Close
@@ -154,7 +163,9 @@ class App extends Component<object, AppState> {
             </>
           )}
           <SearchBar fromSearch={this.handleSearch} />
-          {this.state.error ? (
+          {this.state.loading ? (
+            <Loader />
+          ) : this.state.error ? (
             <p>{this.state.error}</p>
           ) : (
             <SearchResults results={this.state.results} />
