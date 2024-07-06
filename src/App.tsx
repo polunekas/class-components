@@ -4,7 +4,7 @@ import SearchBar from './components/SearchBar/SearchBar';
 import SearchResults from './components/SearchResults/SearchResults';
 import Loader from './components/Loader/Loader';
 import pikachuGif from './assets/pikachu-pokemon.gif';
-import pokemonHeader from './assets/pokemon_header.png';
+import pokemonHeader from './assets/pokemon_header.webp';
 
 interface Pokemon {
   name: string;
@@ -123,7 +123,9 @@ class App extends Component<object, AppState> {
             (pokemon) => pokemon.name === searchItem.toLowerCase()
           );
           if (foundIndex !== -1) {
-            const container = document.querySelector(`.${styles.resultsContainer}`);
+            const container = document.querySelector(
+              `.${styles.resultsContainer}`
+            );
             if (container) {
               container.scrollTo({
                 top: foundIndex * 100,
@@ -159,8 +161,15 @@ class App extends Component<object, AppState> {
     return (
       <div id="root" className={styles.root}>
         <header className={styles.header}>
-          <img src={pokemonHeader} alt="Pokemon" className={styles.headerLogo} />
-          <button className={styles.descriptionButton} onClick={this.togglePopup}>
+          <img
+            src={pokemonHeader}
+            alt="Pokemon"
+            className={styles.headerLogo}
+          />
+          <button
+            className={styles.descriptionButton}
+            onClick={this.togglePopup}
+          >
             How to use
           </button>
           <button className={styles.errorButton} onClick={this.triggerError}>
