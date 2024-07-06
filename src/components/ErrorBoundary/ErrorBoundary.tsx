@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -22,9 +22,19 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     console.error('Error caught by ErrorBoundary:', error, errorInfo);
   }
 
+  handleReload = () => {
+    this.setState({ hasError: false });
+    window.location.reload();
+  };
+
   render(): ReactNode {
     if (this.state.hasError) {
-      return <h1>Something went wrong.</h1>;
+      return (
+        <div>
+          <h1>Something went wrong.</h1>
+          <button onClick={this.handleReload}>Reload</button>
+        </div>
+      );
     }
 
     return this.props.children;

@@ -1,4 +1,4 @@
-import React, { Component, ChangeEvent, KeyboardEvent } from 'react';
+import { Component, type ChangeEvent, type KeyboardEvent } from 'react';
 import './SearchBar.css';
 
 interface SearchBarProps {
@@ -67,11 +67,7 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
         />
-        <button
-          onClick={this.handleSearch}
-        >
-          Search
-        </button>
+        <button onClick={this.handleSearch}>Search</button>
         {this.state.showAlert && (
           <div className="alert">
             <p>Please enter a search term.</p>

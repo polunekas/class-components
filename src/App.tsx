@@ -1,6 +1,5 @@
-import React, { Component, ReactNode } from 'react';
+import { Component, type ReactNode } from 'react';
 import './App.css';
-import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import SearchBar from './components/SearchBar/SearchBar';
 import SearchResults from './components/SearchResults/SearchResults';
 import Loader from './components/Loader/Loader';
@@ -21,6 +20,7 @@ interface AppState {
   error: string | null;
   loading: boolean;
   showPopup: boolean;
+  throwError: boolean;
 }
 
 class App extends Component<object, AppState> {
@@ -32,7 +32,17 @@ class App extends Component<object, AppState> {
       error: null,
       loading: false,
       showPopup: false,
+      throwError: false,
     };
+  }
+
+  componentDidMount() {
+    const savedSearchItem = localStorage.getItem('searchItem');
+    if (savedSearchItem) {
+      this.handleSearch(savedSearchItem);
+    } else {
+      this.handleSearch('');
+    }
   }
 
   handleSearch = async (searchItem: string) => {
@@ -137,42 +147,51 @@ class App extends Component<object, AppState> {
     this.setState((prevState) => ({ showPopup: !prevState.showPopup }));
   };
 
+  triggerError = () => {
+    this.setState({ throwError: true });
+  };
+
   render(): ReactNode {
+    if (this.state.throwError) {
+      throw new Error('Test error thrown');
+    }
+
     return (
-      <ErrorBoundary>
-        <div id="root">
-          <header>
-            <img src={pokemonHeader} alt="Pokemon" className="header-logo" />
-            <button className="description-button" onClick={this.togglePopup}>
-              How to use
-            </button>
-          </header>
-          {this.state.showPopup && (
-            <>
-              <div className="overlay" onClick={this.togglePopup}></div>
-              <div className="popup fadeIn">
-                <h2>How to use the search</h2>
-                <p>
-                  Type the name of a Pokémon and click "Search" or press Enter.
-                </p>
-                <p>Example: pikachu</p>
-                <button className="close-button" onClick={this.togglePopup}>
-                  Close
-                </button>
-              </div>
-            </>
-          )}
-          <SearchBar fromSearch={this.handleSearch} />
-          {this.state.loading ? (
-            <Loader />
-          ) : this.state.error ? (
-            <p>{this.state.error}</p>
-          ) : (
-            <SearchResults results={this.state.results} />
-          )}
-          <img src={pikachuGif} alt="Pikachu" className="fixed-gif" />
-        </div>
-      </ErrorBoundary>
+      <div id="root">
+        <header>
+          <img src={pokemonHeader} alt="Pokemon" className="header-logo" />
+          <button className="description-button" onClick={this.togglePopup}>
+            How to use
+          </button>
+          <button className="error-button" onClick={this.triggerError}>
+            Throw Error
+          </button>
+        </header>
+        {this.state.showPopup && (
+          <>
+            <div className="overlay" onClick={this.togglePopup}></div>
+            <div className="popup fadeIn">
+              <h2>How to use the search</h2>
+              <p>
+                Type the name of a Pokémon and click "Search" or press Enter.
+              </p>
+              <p>Example: pikachu</p>
+              <button className="close-button" onClick={this.togglePopup}>
+                Close
+              </button>
+            </div>
+          </>
+        )}
+        <SearchBar fromSearch={this.handleSearch} />
+        {this.state.loading ? (
+          <Loader />
+        ) : this.state.error ? (
+          <p>{this.state.error}</p>
+        ) : (
+          <SearchResults results={this.state.results} />
+        )}
+        <img src={pikachuGif} alt="Pikachu" className="fixed-gif" />
+      </div>
     );
   }
 }
