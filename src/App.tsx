@@ -1,4 +1,4 @@
-import { Component, type ReactNode } from 'react';
+import React, { Component, type ReactNode } from 'react';
 import styles from './App.module.css';
 import SearchBar from './components/SearchBar/SearchBar';
 import SearchResults from './components/SearchResults/SearchResults';
@@ -201,7 +201,7 @@ class App extends Component<object, AppState> {
             <div className={`${styles.popup} ${styles.fadeIn}`}>
               <h2>How to use the search</h2>
               <p>
-                Type the name of a Pokémon and click "Search" or press Enter.
+                Type the name of a Pokémon and click Search or press Enter.
               </p>
               <p>Example: pikachu</p>
               <button

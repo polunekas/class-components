@@ -1,4 +1,4 @@
-import { Component, type ChangeEvent, type KeyboardEvent } from 'react';
+import React, { Component, type ChangeEvent, type KeyboardEvent } from 'react';
 import styles from './SearchBar.module.css';
 
 interface SearchBarProps {
