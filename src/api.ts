@@ -18,7 +18,7 @@ export const fetchPokemonsList = async (offset = 0, limit = 20) => {
 
   if (!response.ok) {
     throw new Error('No pokemons found');
-  }
+  }querySelector
 
   const data = await response.json();
   return data;

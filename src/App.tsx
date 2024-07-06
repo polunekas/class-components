@@ -1,4 +1,4 @@
-import React, { Component, type ReactNode } from 'react';
+import React, { Component, type ReactNode, createRef } from 'react';
 import styles from './App.module.css';
 import SearchBar from './components/SearchBar/SearchBar';
 import SearchResults from './components/SearchResults/SearchResults';
@@ -25,6 +25,8 @@ interface AppState {
 }
 
 class App extends Component<object, AppState> {
+  resultsContainerRef: React.RefObject<HTMLDivElement>;
+
   constructor(props: object) {
     super(props);
     this.state = {
@@ -35,6 +37,7 @@ class App extends Component<object, AppState> {
       showPopup: false,
       throwError: false,
     };
+    this.resultsContainerRef = createRef();
   }
 
   componentDidMount() {
@@ -107,16 +110,11 @@ class App extends Component<object, AppState> {
           const foundIndex = pokemons.findIndex(
             (pokemon) => pokemon.name === searchItem.toLowerCase()
           );
-          if (foundIndex !== -1) {
-            const container = document.querySelector(
-              `.${styles.resultsContainer}`
-            );
-            if (container) {
-              container.scrollTo({
-                top: foundIndex * 100,
-                behavior: 'smooth',
-              });
-            }
+          if (foundIndex !== -1 && this.resultsContainerRef.current) {
+            this.resultsContainerRef.current.scrollTo({
+              top: foundIndex * 100,
+              behavior: 'smooth',
+            });
           }
         }
       });
@@ -193,7 +191,12 @@ class App extends Component<object, AppState> {
         ) : this.state.error ? (
           <p>{this.state.error}</p>
         ) : (
-          <SearchResults pokemons={this.state.pokemons} />
+          <div
+            ref={this.resultsContainerRef}
+            className={styles.resultsContainer}
+          >
+            <SearchResults pokemons={this.state.pokemons} />
+          </div>
         )}
         <img src={pikachuGif} alt="Pikachu" className={styles.fixedGif} />
       </div>
