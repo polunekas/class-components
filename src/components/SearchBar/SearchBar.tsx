@@ -1,5 +1,5 @@
 import { Component, type ChangeEvent, type KeyboardEvent } from 'react';
-import './SearchBar.css';
+import styles from './SearchBar.module.css';
 
 interface SearchBarProps {
   fromSearch?: (searchItem: string) => void;
@@ -57,7 +57,7 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
 
   render() {
     return (
-      <div className="search-bar-container">
+      <div className={styles.searchBarContainer}>
         <input
           type="text"
           value={this.state.searchItem}
@@ -66,12 +66,13 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
           placeholder={this.state.placeholder}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
+          className={styles.input}
         />
-        <button onClick={this.handleSearch}>Search</button>
+        <button onClick={this.handleSearch} className={styles.button}>Search</button>
         {this.state.showAlert && (
-          <div className="alert">
+          <div className={styles.alert}>
             <p>Please enter a search term.</p>
-            <button onClick={this.closeAlert}>Close</button>
+            <button onClick={this.closeAlert} className={styles.closeAlertButton}>Close</button>
           </div>
         )}
       </div>

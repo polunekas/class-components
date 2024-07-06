@@ -1,5 +1,5 @@
 import { Component, type ReactNode } from 'react';
-import './App.css';
+import styles from './App.module.css';
 import SearchBar from './components/SearchBar/SearchBar';
 import SearchResults from './components/SearchResults/SearchResults';
 import Loader from './components/Loader/Loader';
@@ -123,7 +123,7 @@ class App extends Component<object, AppState> {
             (pokemon) => pokemon.name === searchItem.toLowerCase()
           );
           if (foundIndex !== -1) {
-            const container = document.querySelector('.results-container');
+            const container = document.querySelector(`.${styles.resultsContainer}`);
             if (container) {
               container.scrollTo({
                 top: foundIndex * 100,
@@ -157,26 +157,26 @@ class App extends Component<object, AppState> {
     }
 
     return (
-      <div id="root">
-        <header>
-          <img src={pokemonHeader} alt="Pokemon" className="header-logo" />
-          <button className="description-button" onClick={this.togglePopup}>
+      <div id="root" className={styles.root}>
+        <header className={styles.header}>
+          <img src={pokemonHeader} alt="Pokemon" className={styles.headerLogo} />
+          <button className={styles.descriptionButton} onClick={this.togglePopup}>
             How to use
           </button>
-          <button className="error-button" onClick={this.triggerError}>
+          <button className={styles.errorButton} onClick={this.triggerError}>
             Throw Error
           </button>
         </header>
         {this.state.showPopup && (
           <>
-            <div className="overlay" onClick={this.togglePopup}></div>
-            <div className="popup fadeIn">
+            <div className={styles.overlay} onClick={this.togglePopup}></div>
+            <div className={`${styles.popup} ${styles.fadeIn}`}>
               <h2>How to use the search</h2>
               <p>
                 Type the name of a Pokémon and click "Search" or press Enter.
               </p>
               <p>Example: pikachu</p>
-              <button className="close-button" onClick={this.togglePopup}>
+              <button className={styles.closeButton} onClick={this.togglePopup}>
                 Close
               </button>
             </div>
@@ -190,7 +190,7 @@ class App extends Component<object, AppState> {
         ) : (
           <SearchResults results={this.state.results} />
         )}
-        <img src={pikachuGif} alt="Pikachu" className="fixed-gif" />
+        <img src={pikachuGif} alt="Pikachu" className={styles.fixedGif} />
       </div>
     );
   }

@@ -1,21 +1,21 @@
-.search-bar-container {
+.searchBarContainer {
   display: flex;
   align-items: center;
   margin-bottom: 20px;
 }
 
-.search-bar-container input[type='text'] {
+.input {
   padding: 10px;
   border: 2px solid #ffcc00;
   border-radius: 5px 0 0 5px;
   width: 200px;
 }
 
-.search-bar-container input::placeholder {
+.input::placeholder {
   color: lightgray;
 }
 
-.search-bar-container button {
+.button {
   padding: 10px 20px;
   border: none;
   background-color: #ffcc00;
@@ -23,13 +23,13 @@
   border-radius: 0 5px 5px 0;
 }
 
-.search-bar-container button:disabled {
+.button:disabled {
   background-color: #ffcc00;
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.search-bar-container button:hover:enabled {
+.button:hover:enabled {
   background-color: #e6b800;
 }
 
@@ -46,7 +46,7 @@
   margin: 0;
 }
 
-.alert button {
+.closeAlertButton {
   margin-top: 10px;
   padding: 5px 10px;
   background-color: white;
