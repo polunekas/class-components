@@ -10,14 +10,14 @@ interface Pokemon {
 }
 
 interface SearchResultsProps {
-  results: Pokemon[];
+  pokemons: Pokemon[];
 }
 
-const SearchResults: React.FC<SearchResultsProps> = ({ results }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ pokemons }) => {
   return (
     <div className={styles.resultsContainer}>
-      {results.length > 0 ? (
-        results.map((result, index) => (
+      {pokemons.length > 0 ? (
+        pokemons.map((result, index) => (
           <div key={index} className={styles.resultItem}>
             <h3>{result.name[0].toUpperCase() + result.name.slice(1)}</h3>
             <p>Height: {result.height}</p>
@@ -27,7 +27,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ results }) => {
           </div>
         ))
       ) : (
-        <p>No results found</p>
+        <p>No pokemons found</p>
       )}
     </div>
   );

@@ -16,9 +16,9 @@ interface Pokemon {
 
 interface AppState {
   searchItem: string;
-  results: Pokemon[];
+  pokemons: Pokemon[];
   error: string | null;
-  loading: boolean;
+  isLoading: boolean;
   showPopup: boolean;
   throwError: boolean;
 }
@@ -28,9 +28,9 @@ class App extends Component<object, AppState> {
     super(props);
     this.state = {
       searchItem: '',
-      results: [],
+      pokemons: [],
       error: null,
-      loading: false,
+      isLoading: false,
       showPopup: false,
       throwError: false,
     };
@@ -46,10 +46,10 @@ class App extends Component<object, AppState> {
   }
 
   handleSearch = async (searchItem: string) => {
-    this.setState({ searchItem, error: null, loading: true });
+    this.setState({ searchItem, error: null, isLoading: true });
 
     try {
-      let results: Pokemon[] = [];
+      let pokemons: Pokemon[] = [];
       if (searchItem) {
         const response = await fetch(
           `https://pokeapi.co/api/v2/pokemon/${searchItem.toLowerCase()}`
@@ -60,7 +60,7 @@ class App extends Component<object, AppState> {
         }
 
         const data = await response.json();
-        results = [
+        pokemons = [
           {
             name: data.name || 'Not Found',
             height: data.height || 'Not Found',
@@ -97,7 +97,7 @@ class App extends Component<object, AppState> {
 
         const detailedData = await Promise.all(pokemonDetailsPromises);
 
-        results = detailedData.map((data) => ({
+        pokemons = detailedData.map((data) => ({
           name: data.name || 'Not Found',
           height: data.height || 'Not Found',
           weight: data.weight || 'Not Found',
@@ -117,9 +117,9 @@ class App extends Component<object, AppState> {
         }));
       }
 
-      this.setState({ results, loading: false }, () => {
+      this.setState({ pokemons, isLoading: false }, () => {
         if (searchItem) {
-          const foundIndex = results.findIndex(
+          const foundIndex = pokemons.findIndex(
             (pokemon) => pokemon.name === searchItem.toLowerCase()
           );
           if (foundIndex !== -1) {
@@ -138,9 +138,9 @@ class App extends Component<object, AppState> {
     } catch (error) {
       console.error(error);
       if (error instanceof Error) {
-        this.setState({ error: error.message, loading: false });
+        this.setState({ error: error.message, isLoading: false });
       } else {
-        this.setState({ error: 'An unknown error occurred', loading: false });
+        this.setState({ error: 'An unknown error occurred', isLoading: false });
       }
     }
   };
@@ -200,9 +200,7 @@ class App extends Component<object, AppState> {
             ></div>
             <div className={`${styles.popup} ${styles.fadeIn}`}>
               <h2>How to use the search</h2>
-              <p>
-                Type the name of a Pokémon and click Search or press Enter.
-              </p>
+              <p>Type the name of a Pokémon and click Search or press Enter.</p>
               <p>Example: pikachu</p>
               <button
                 className={styles.closeButton}
@@ -216,12 +214,12 @@ class App extends Component<object, AppState> {
           </>
         )}
         <SearchBar fromSearch={this.handleSearch} />
-        {this.state.loading ? (
+        {this.state.isLoading ? (
           <Loader />
         ) : this.state.error ? (
           <p>{this.state.error}</p>
         ) : (
-          <SearchResults results={this.state.results} />
+          <SearchResults pokemons={this.state.pokemons} />
         )}
         <img src={pikachuGif} alt="Pikachu" className={styles.fixedGif} />
       </div>
