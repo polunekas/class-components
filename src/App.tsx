@@ -153,6 +153,18 @@ class App extends Component<object, AppState> {
     this.setState({ throwError: true });
   };
 
+  handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      this.togglePopup();
+    }
+  };
+
+  handleKeyPressClose = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      this.togglePopup();
+    }
+  };
+
   render(): ReactNode {
     if (this.state.throwError) {
       throw new Error('Test error thrown');
@@ -178,14 +190,26 @@ class App extends Component<object, AppState> {
         </header>
         {this.state.showPopup && (
           <>
-            <div className={styles.overlay} onClick={this.togglePopup}></div>
+            <div
+              className={styles.overlay}
+              onClick={this.togglePopup}
+              onKeyPress={this.handleKeyPress}
+              tabIndex={0}
+              role="button"
+              aria-label="Close popup"
+            ></div>
             <div className={`${styles.popup} ${styles.fadeIn}`}>
               <h2>How to use the search</h2>
               <p>
                 Type the name of a Pokémon and click "Search" or press Enter.
               </p>
               <p>Example: pikachu</p>
-              <button className={styles.closeButton} onClick={this.togglePopup}>
+              <button
+                className={styles.closeButton}
+                onClick={this.togglePopup}
+                onKeyPress={this.handleKeyPressClose}
+                tabIndex={0}
+              >
                 Close
               </button>
             </div>
