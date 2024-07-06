@@ -1,4 +1,4 @@
-import React, { Component, type ChangeEvent, type KeyboardEvent } from 'react';
+import React, { Component, type ChangeEvent, type FormEvent } from 'react';
 import styles from './SearchBar.module.css';
 
 interface SearchBarProps {
@@ -35,20 +35,13 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
     }
   };
 
-  handleKeyPress = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      this.handleSearch();
-    }
+  handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    this.handleSearch();
   };
 
   handleFocus = () => {
     this.setState({ placeholder: '' });
-  };
-
-  handleBlur = () => {
-    if (!this.state.searchItem) {
-      this.setState({ placeholder: 'pikachu' });
-    }
   };
 
   closeAlert = () => {
@@ -57,25 +50,30 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
 
   render() {
     return (
-      <div className={styles.searchBarContainer}>
+      <form onSubmit={this.handleFormSubmit} className={styles.searchBarContainer}>
         <input
           type="text"
           value={this.state.searchItem}
           onChange={this.handleInputChange}
-          onKeyPress={this.handleKeyPress}
-          placeholder={this.state.placeholder}
+          placeholder="pikachu"
           onFocus={this.handleFocus}
-          onBlur={this.handleBlur}
           className={styles.input}
         />
-        <button onClick={this.handleSearch} className={styles.button}>Search</button>
+        <button type="submit" className={styles.button}>
+          Search
+        </button>
         {this.state.showAlert && (
           <div className={styles.alert}>
             <p>Please enter a search term.</p>
-            <button onClick={this.closeAlert} className={styles.closeAlertButton}>Close</button>
+            <button
+              onClick={this.closeAlert}
+              className={styles.closeAlertButton}
+            >
+              Close
+            </button>
           </div>
         )}
-      </div>
+      </form>
     );
   }
 }
