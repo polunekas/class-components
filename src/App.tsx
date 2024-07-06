@@ -5,6 +5,7 @@ import SearchResults from './components/SearchResults/SearchResults';
 import Loader from './components/Loader/Loader';
 import pikachuGif from './assets/pikachu-pokemon.gif';
 import pokemonHeader from './assets/pokemon_header.webp';
+import { fetchPokemonData, fetchPokemonsList } from './api';
 
 interface Pokemon {
   name: string;
@@ -51,15 +52,7 @@ class App extends Component<object, AppState> {
     try {
       let pokemons: Pokemon[] = [];
       if (searchItem) {
-        const response = await fetch(
-          `https://pokeapi.co/api/v2/pokemon/${searchItem.toLowerCase()}`
-        );
-
-        if (!response.ok) {
-          throw new Error(`Error fetching data`);
-        }
-
-        const data = await response.json();
+        const data = await fetchPokemonData(searchItem);
         pokemons = [
           {
             name: data.name || 'Not Found',
@@ -81,15 +74,7 @@ class App extends Component<object, AppState> {
           },
         ];
       } else {
-        const response = await fetch(
-          'https://pokeapi.co/api/v2/pokemon?offset=0&limit=20'
-        );
-
-        if (!response.ok) {
-          throw new Error(`Error fetching data: ${response.statusText}`);
-        }
-
-        const data = await response.json();
+        const data = await fetchPokemonsList();
         const pokemonDetailsPromises = data.results.map(
           (pokemon: { name: string; url: string }) =>
             fetch(pokemon.url).then((response) => response.json())
@@ -153,6 +138,12 @@ class App extends Component<object, AppState> {
     this.setState({ throwError: true });
   };
 
+  handleKeyPress = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      this.togglePopup();
+    }
+  };
+
   render(): ReactNode {
     if (this.state.throwError) {
       throw new Error('Test error thrown');
@@ -178,7 +169,14 @@ class App extends Component<object, AppState> {
         </header>
         {this.state.showPopup && (
           <>
-            <div className={styles.overlay} onClick={this.togglePopup}></div>
+            <div
+              className={styles.overlay}
+              role="button"
+              tabIndex={0}
+              onClick={this.togglePopup}
+              onKeyDown={this.handleKeyPress}
+              aria-label="Close popup"
+            ></div>
             <dialog open className={`${styles.popup} ${styles.fadeIn}`}>
               <h2>How to use the search</h2>
               <p>Type the name of a Pokémon and click Search or press Enter.</p>
