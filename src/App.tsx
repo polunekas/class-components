@@ -5,7 +5,7 @@ import SearchResults from './components/SearchResults/SearchResults';
 import Loader from './components/Loader/Loader';
 import pikachuGif from './assets/pikachu-pokemon.gif';
 import pokemonHeader from './assets/pokemon_header.webp';
-import { fetchPokemonData, fetchPokemonsList } from './api';
+import { fetchPokemonData, fetchPokemonsList, PokemonCard } from './api';
 
 interface Pokemon {
   name: string;
@@ -77,10 +77,9 @@ class App extends Component<object, AppState> {
           },
         ];
       } else {
-        const data = await fetchPokemonsList();
-        const pokemonDetailsPromises = data.results.map(
-          (pokemon: { name: string; url: string }) =>
-            fetch(pokemon.url).then((response) => response.json())
+        const pokemonCards: PokemonCard[] = await fetchPokemonsList();
+        const pokemonDetailsPromises = pokemonCards.map((pokemon) =>
+          fetch(pokemon.url).then((response) => response.json())
         );
 
         const detailedData = await Promise.all(pokemonDetailsPromises);

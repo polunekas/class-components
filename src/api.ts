@@ -1,10 +1,15 @@
+export interface PokemonCard {
+  name: string;
+  url: string;
+}
+
 export const fetchPokemonData = async (searchItem: string) => {
   const response = await fetch(
     `https://pokeapi.co/api/v2/pokemon/${searchItem.toLowerCase()}`
   );
 
   if (!response.ok) {
-    throw new Error('No pokemons found');
+    throw new Error('Error fetching data');
   }
 
   const data = await response.json();
@@ -17,9 +22,9 @@ export const fetchPokemonsList = async (offset = 0, limit = 20) => {
   );
 
   if (!response.ok) {
-    throw new Error('No pokemons found');
-  }querySelector
+    throw new Error('Error fetching data');
+  }
 
   const data = await response.json();
-  return data;
+  return data.results as PokemonCard[];
 };
