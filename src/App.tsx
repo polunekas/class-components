@@ -5,7 +5,8 @@ import SearchResults from './components/SearchResults/SearchResults';
 import Loader from './components/Loader/Loader';
 import pikachuGif from './assets/pikachu-pokemon.gif';
 import pokemonHeader from './assets/pokemon_header.webp';
-import { fetchPokemonData, fetchPokemonsList, PokemonCard } from './api';
+import { fetchPokemonData, fetchPokemonsList } from './api';
+import type { PokemonCard } from './api';
 
 interface Pokemon {
   name: string;
