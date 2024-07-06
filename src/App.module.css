@@ -41,6 +41,7 @@ html {
   border-radius: 5px;
   margin-top: 10px;
 }
+
 .errorButton {
   background-color: #3e3ebe;
   color: white;
@@ -52,10 +53,6 @@ html {
 }
 
 .popup {
-  position: fixed;
-  top: 20%;
-  left: 50%;
-  transform: translate(-50%, -20%);
   background-color: white;
   padding: 20px;
   border: 1px solid #333;
