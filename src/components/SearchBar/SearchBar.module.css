@@ -1,0 +1,57 @@
+.searchBarContainer {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.input {
+  padding: 10px;
+  border: 2px solid #ffcc00;
+  border-radius: 5px 0 0 5px;
+  width: 200px;
+}
+
+.input::placeholder {
+  color: lightgray;
+}
+
+.button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #ffcc00;
+  cursor: pointer;
+  border-radius: 0 5px 5px 0;
+}
+
+.button:disabled {
+  background-color: #ffcc00;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button:hover:enabled {
+  background-color: #e6b800;
+}
+
+.alert {
+  background-color: lightcoral;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.alert p {
+  margin: 0;
+}
+
+.closeAlertButton {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: white;
+  color: lightcoral;
+  border: 1px solid lightcoral;
+  border-radius: 5px;
+  cursor: pointer;
+}
