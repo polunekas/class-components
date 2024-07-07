@@ -1,5 +1,5 @@
-import React, { Component, type ChangeEvent, type FormEvent } from 'react';
-import styles from './SearchBar.module.css';
+import React, { Component, type ChangeEvent, type FormEvent } from "react";
+import styles from "./SearchBar.module.css";
 
 interface SearchBarProps {
   fromSearch?: (searchItem: string) => void;
@@ -14,10 +14,10 @@ interface SearchBarState {
 class SearchBar extends Component<SearchBarProps, SearchBarState> {
   constructor(props: SearchBarProps) {
     super(props);
-    const savedSearchItem = localStorage.getItem('searchItem') || '';
+    const savedSearchItem = localStorage.getItem("searchItem") || "";
     this.state = {
       searchItem: savedSearchItem,
-      placeholder: savedSearchItem ? '' : 'pikachu',
+      placeholder: savedSearchItem ? "" : "pikachu",
       showAlert: false,
     };
   }
@@ -28,7 +28,7 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
 
   handleSearch = () => {
     const trimmedSearchItem = this.state.searchItem.trim();
-    localStorage.setItem('searchItem', trimmedSearchItem);
+    localStorage.setItem("searchItem", trimmedSearchItem);
 
     if (this.props.fromSearch) {
       this.props.fromSearch(trimmedSearchItem);
@@ -41,7 +41,7 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
   };
 
   handleFocus = () => {
-    this.setState({ placeholder: '' });
+    this.setState({ placeholder: "" });
   };
 
   closeAlert = () => {
@@ -50,7 +50,10 @@ class SearchBar extends Component<SearchBarProps, SearchBarState> {
 
   render() {
     return (
-      <form onSubmit={this.handleFormSubmit} className={styles.searchBarContainer}>
+      <form
+        onSubmit={this.handleFormSubmit}
+        className={styles.searchBarContainer}
+      >
         <input
           type="text"
           value={this.state.searchItem}

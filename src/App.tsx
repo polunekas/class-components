@@ -1,12 +1,12 @@
-import React, { Component, type ReactNode, createRef } from 'react';
-import styles from './App.module.css';
-import SearchBar from './components/SearchBar/SearchBar';
-import SearchResults from './components/SearchResults/SearchResults';
-import Loader from './components/Loader/Loader';
-import pikachuGif from './assets/pikachu-pokemon.gif';
-import pokemonHeader from './assets/pokemon_header.webp';
-import { fetchPokemonData, fetchPokemonsList } from './api';
-import type { PokemonCard } from './api';
+import React, { Component, type ReactNode, createRef } from "react";
+import styles from "./App.module.css";
+import SearchBar from "./components/SearchBar/SearchBar";
+import SearchResults from "./components/SearchResults/SearchResults";
+import Loader from "./components/Loader/Loader";
+import pikachuGif from "./assets/pikachu-pokemon.gif";
+import pokemonHeader from "./assets/pokemon_header.webp";
+import { fetchPokemonData, fetchPokemonsList } from "./api";
+import type { PokemonCard } from "./api";
 
 interface Pokemon {
   name: string;
@@ -31,7 +31,7 @@ class App extends Component<object, AppState> {
   constructor(props: object) {
     super(props);
     this.state = {
-      searchItem: '',
+      searchItem: "",
       pokemons: [],
       error: null,
       isLoading: false,
@@ -42,11 +42,11 @@ class App extends Component<object, AppState> {
   }
 
   componentDidMount() {
-    const savedSearchItem = localStorage.getItem('searchItem');
+    const savedSearchItem = localStorage.getItem("searchItem");
     if (savedSearchItem) {
       this.handleSearch(savedSearchItem);
     } else {
-      this.handleSearch('');
+      this.handleSearch("");
     }
   }
 
@@ -59,61 +59,61 @@ class App extends Component<object, AppState> {
         const data = await fetchPokemonData(searchItem);
         pokemons = [
           {
-            name: data.name || 'Not Found',
-            height: data.height || 'Not Found',
-            weight: data.weight || 'Not Found',
+            name: data.name || "Not Found",
+            height: data.height || "Not Found",
+            weight: data.weight || "Not Found",
             abilities: data.abilities
               ? data.abilities
                   .map(
                     (ability: { ability: { name: string } }) =>
-                      ability.ability.name
+                      ability.ability.name,
                   )
-                  .join(', ')
-              : 'Not Found',
+                  .join(", ")
+              : "Not Found",
             types: data.types
               ? data.types
                   .map((type: { type: { name: string } }) => type.type.name)
-                  .join(', ')
-              : 'Not Found',
+                  .join(", ")
+              : "Not Found",
           },
         ];
       } else {
         const pokemonCards: PokemonCard[] = await fetchPokemonsList();
         const pokemonDetailsPromises = pokemonCards.map((pokemon) =>
-          fetch(pokemon.url).then((response) => response.json())
+          fetch(pokemon.url).then((response) => response.json()),
         );
 
         const detailedData = await Promise.all(pokemonDetailsPromises);
 
         pokemons = detailedData.map((data) => ({
-          name: data.name || 'Not Found',
-          height: data.height || 'Not Found',
-          weight: data.weight || 'Not Found',
+          name: data.name || "Not Found",
+          height: data.height || "Not Found",
+          weight: data.weight || "Not Found",
           abilities: data.abilities
             ? data.abilities
                 .map(
                   (ability: { ability: { name: string } }) =>
-                    ability.ability.name
+                    ability.ability.name,
                 )
-                .join(', ')
-            : 'Not Found',
+                .join(", ")
+            : "Not Found",
           types: data.types
             ? data.types
                 .map((type: { type: { name: string } }) => type.type.name)
-                .join(', ')
-            : 'Not Found',
+                .join(", ")
+            : "Not Found",
         }));
       }
 
       this.setState({ pokemons, isLoading: false }, () => {
         if (searchItem) {
           const foundIndex = pokemons.findIndex(
-            (pokemon) => pokemon.name === searchItem.toLowerCase()
+            (pokemon) => pokemon.name === searchItem.toLowerCase(),
           );
           if (foundIndex !== -1 && this.resultsContainerRef.current) {
             this.resultsContainerRef.current.scrollTo({
               top: foundIndex * 100,
-              behavior: 'smooth',
+              behavior: "smooth",
             });
           }
         }
@@ -123,7 +123,7 @@ class App extends Component<object, AppState> {
       if (error instanceof Error) {
         this.setState({ error: error.message, isLoading: false });
       } else {
-        this.setState({ error: 'An unknown error occurred', isLoading: false });
+        this.setState({ error: "An unknown error occurred", isLoading: false });
       }
     }
   };
@@ -137,14 +137,14 @@ class App extends Component<object, AppState> {
   };
 
   handleKeyPress = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
+    if (event.key === "Enter" || event.key === " ") {
       this.togglePopup();
     }
   };
 
   render(): ReactNode {
     if (this.state.throwError) {
-      throw new Error('Test error thrown');
+      throw new Error("Test error thrown");
     }
 
     return (

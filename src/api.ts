@@ -5,11 +5,11 @@ export interface PokemonCard {
 
 export const fetchPokemonData = async (searchItem: string) => {
   const response = await fetch(
-    `https://pokeapi.co/api/v2/pokemon/${searchItem.toLowerCase()}`
+    `https://pokeapi.co/api/v2/pokemon/${searchItem.toLowerCase()}`,
   );
 
   if (!response.ok) {
-    throw new Error('Error fetching data');
+    throw new Error("Error fetching data");
   }
 
   const data = await response.json();
@@ -18,11 +18,11 @@ export const fetchPokemonData = async (searchItem: string) => {
 
 export const fetchPokemonsList = async (offset = 0, limit = 20) => {
   const response = await fetch(
-    `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`
+    `https://pokeapi.co/api/v2/pokemon?offset=${offset}&limit=${limit}`,
   );
 
   if (!response.ok) {
-    throw new Error('Error fetching data');
+    throw new Error("Error fetching data");
   }
 
   const data = await response.json();
