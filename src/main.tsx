@@ -1,12 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import AppRouter from "./AppRouter";
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
-  </React.StrictMode>,
+	<React.StrictMode>
+		<ErrorBoundary>
+			<AppRouter />
+		</ErrorBoundary>
+	</React.StrictMode>,
 );

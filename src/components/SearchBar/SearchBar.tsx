@@ -1,84 +1,70 @@
-import React, { Component, type ChangeEvent, type FormEvent } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
+import useSearchItem from "../../hooks/useSearchItem";
 import styles from "./SearchBar.module.css";
 
 interface SearchBarProps {
-  fromSearch?: (searchItem: string) => void;
+	fromSearch?: (searchItem: string) => void;
 }
 
-interface SearchBarState {
-  searchItem: string;
-  placeholder: string;
-  showAlert: boolean;
-}
+const SearchBar: React.FC<SearchBarProps> = ({ fromSearch }) => {
+	const [searchItem, setSearchItem] = useSearchItem();
+	const [placeholder, setPlaceholder] = useState(searchItem ? "" : "pikachu");
+	const [showAlert, setShowAlert] = useState(false);
 
-class SearchBar extends Component<SearchBarProps, SearchBarState> {
-  constructor(props: SearchBarProps) {
-    super(props);
-    const savedSearchItem = localStorage.getItem("searchItem") || "";
-    this.state = {
-      searchItem: savedSearchItem,
-      placeholder: savedSearchItem ? "" : "pikachu",
-      showAlert: false,
-    };
-  }
+	const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+		setSearchItem(event.target.value);
+	};
 
-  handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ searchItem: event.target.value });
-  };
+	const handleSearch = () => {
+		const trimmedSearchItem = searchItem.trim();
 
-  handleSearch = () => {
-    const trimmedSearchItem = this.state.searchItem.trim();
-    localStorage.setItem("searchItem", trimmedSearchItem);
+		if (fromSearch) {
+			fromSearch(trimmedSearchItem);
+		}
+	};
 
-    if (this.props.fromSearch) {
-      this.props.fromSearch(trimmedSearchItem);
-    }
-  };
+	const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		handleSearch();
+	};
 
-  handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    this.handleSearch();
-  };
+	const handleFocus = () => {
+		setPlaceholder("");
+	};
 
-  handleFocus = () => {
-    this.setState({ placeholder: "" });
-  };
+	const closeAlert = () => {
+		setShowAlert(false);
+	};
 
-  closeAlert = () => {
-    this.setState({ showAlert: false });
-  };
-
-  render() {
-    return (
-      <form
-        onSubmit={this.handleFormSubmit}
-        className={styles.searchBarContainer}
-      >
-        <input
-          type="text"
-          value={this.state.searchItem}
-          onChange={this.handleInputChange}
-          placeholder="pikachu"
-          onFocus={this.handleFocus}
-          className={styles.input}
-        />
-        <button type="submit" className={styles.button}>
-          Search
-        </button>
-        {this.state.showAlert && (
-          <div className={styles.alert}>
-            <p>Please enter a search term.</p>
-            <button
-              onClick={this.closeAlert}
-              className={styles.closeAlertButton}
-            >
-              Close
-            </button>
-          </div>
-        )}
-      </form>
-    );
-  }
-}
+	return (
+		<form
+			onSubmit={handleFormSubmit}
+			className={styles.searchBarContainer}
+		>
+			<input
+				type="text"
+				value={searchItem}
+				onChange={handleInputChange}
+				placeholder={placeholder}
+				onFocus={handleFocus}
+				className={styles.input}
+			/>
+			<button type="submit" className={styles.button}>
+				Search
+			</button>
+			{showAlert && (
+				<div className={styles.alert}>
+					<p>Please enter a search term.</p>
+					<button
+						onClick={closeAlert}
+						className={styles.closeAlertButton}
+					>
+						Close
+					</button>
+				</div>
+			)}
+		</form>
+	);
+};
 
 export default SearchBar;
