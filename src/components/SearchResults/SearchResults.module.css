@@ -1,28 +1,19 @@
 .resultsContainer {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-height: 400px;
-  overflow-y: auto;
-  margin-top: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .resultItem {
-  background-color: #fff;
-  border: 2px solid #ffcc00;
-  border-radius: 10px;
-  padding: 20px;
+  flex: 1 0 21%; /* Adjust the width as needed */
   margin: 10px;
-  width: 300px;
-  text-align: center;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  cursor: pointer;
 }
 
-.resultItem h3 {
-  margin: 0 0 10px 0;
-  color: #333;
-}
-
-.resultItem p {
-  margin: 5px 0;
+.resultItem:hover {
+  background-color: #f1f1f1;
 }

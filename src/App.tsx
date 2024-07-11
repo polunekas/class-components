@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./App.module.css";
 import SearchBar from "./components/SearchBar/SearchBar";
 import SearchResults from "./components/SearchResults/SearchResults";
 import Loader from "./components/Loader/Loader";
 import Pagination from "./components/Pagination/Pagination";
+import DetailedCard from "./components/DetailedCard/DetailedCard";
 import pikachuGif from "./assets/pikachu-pokemon.gif";
 import pokemonHeader from "./assets/pokemon_header.webp";
 import { fetchPokemonData, fetchPokemonsList } from "./api";
@@ -18,35 +19,35 @@ interface Pokemon {
 	types: string;
 }
 
+const useSearchItem = () => {
+	const [searchItem, setSearchItem] = useState<string>(() => {
+		return localStorage.getItem("searchItem") || "";
+	});
+
+	useEffect(() => {
+		return () => {
+			localStorage.setItem("searchItem", searchItem);
+		};
+	}, [searchItem]);
+
+	return [searchItem, setSearchItem] as const;
+};
+
 const App: React.FC = () => {
-	const [searchItem, setSearchItem] = useState<string>("");
+	const [searchItem, setSearchItem] = useSearchItem();
 	const [pokemons, setPokemons] = useState<Pokemon[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [showPopup, setShowPopup] = useState<boolean>(false);
 	const [throwError, setThrowError] = useState<boolean>(false);
 	const [currentPage, setCurrentPage] = useState<number>(1);
+	const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
+	const [isDetailsLoading, setIsDetailsLoading] = useState<boolean>(false);
 	const resultsContainerRef = useRef<HTMLDivElement>(null);
 	const location = useLocation();
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		const savedSearchItem = localStorage.getItem("searchItem");
-		if (savedSearchItem) {
-			handleSearch(savedSearchItem);
-		} else {
-			handleSearch("");
-		}
-	}, []);
-
-	useEffect(() => {
-		const params = new URLSearchParams(location.search);
-		const page = parseInt(params.get("page") || "1", 10);
-		setCurrentPage(page);
-	}, [location.search]);
-
-	const handleSearch = async (searchItem: string) => {
-		setSearchItem(searchItem);
+	const handleSearch = useCallback(async (searchItem: string) => {
 		setError(null);
 		setIsLoading(true);
 
@@ -126,7 +127,28 @@ const App: React.FC = () => {
 			}
 			setIsLoading(false);
 		}
-	};
+	}, [currentPage]);
+
+	useEffect(() => {
+		const savedSearchItem = localStorage.getItem("searchItem");
+		if (savedSearchItem) {
+			setSearchItem(savedSearchItem);
+		} else {
+			setSearchItem("");
+		}
+	}, [setSearchItem]);
+
+	useEffect(() => {
+		if (searchItem !== "") {
+			handleSearch(searchItem);
+		}
+	}, [searchItem, handleSearch]);
+
+	useEffect(() => {
+		const params = new URLSearchParams(location.search);
+		const page = parseInt(params.get("page") || "1", 10);
+		setCurrentPage(page);
+	}, [location.search]);
 
 	const togglePopup = () => {
 		setShowPopup((prev) => !prev);
@@ -144,6 +166,38 @@ const App: React.FC = () => {
 
 	const handlePageChange = (page: number) => {
 		setCurrentPage(page);
+		navigate(`/?page=${page}`);
+	};
+
+	const handleCardClick = async (pokemon: Pokemon) => {
+		setIsDetailsLoading(true);
+		setSelectedPokemon(null);
+		navigate(`/?page=${currentPage}&details=${pokemon.name}`);
+
+		try {
+			const data = await fetchPokemonData(pokemon.name);
+			setSelectedPokemon({
+				name: data.name,
+				height: data.height,
+				weight: data.weight,
+				abilities: data.abilities
+					.map((ability: { ability: { name: string } }) => ability.ability.name)
+					.join(", "),
+				types: data.types
+					.map((type: { type: { name: string } }) => type.type.name)
+					.join(", "),
+			});
+		} catch (error) {
+			console.error(error);
+			setError("Failed to fetch details");
+		} finally {
+			setIsDetailsLoading(false);
+		}
+	};
+
+	const handleCloseDetails = () => {
+		setSelectedPokemon(null);
+		navigate(`/?page=${currentPage}`);
 	};
 
 	if (throwError) {
@@ -153,15 +207,8 @@ const App: React.FC = () => {
 	return (
 		<div id="root" className={styles.root}>
 			<header className={styles.header}>
-				<img
-					src={pokemonHeader}
-					alt="Pokemon"
-					className={styles.headerLogo}
-				/>
-				<button
-					className={styles.descriptionButton}
-					onClick={togglePopup}
-				>
+				<img src={pokemonHeader} alt="Pokemon" className={styles.headerLogo} />
+				<button className={styles.descriptionButton} onClick={togglePopup}>
 					How to use
 				</button>
 				<button className={styles.errorButton} onClick={triggerError}>
@@ -194,16 +241,29 @@ const App: React.FC = () => {
 			) : error ? (
 				<p>{error}</p>
 			) : (
-				<div
-					ref={resultsContainerRef}
-					className={styles.resultsContainer}
-				>
-					<SearchResults pokemons={pokemons} />
-					<Pagination
-						currentPage={currentPage}
-						totalPages={Math.ceil(pokemons.length / 20)}
-						onPageChange={handlePageChange}
-					/>
+				<div className={styles.content}>
+					<div
+						className={styles.resultsSection}
+						ref={resultsContainerRef}
+						onClick={handleCloseDetails}
+					>
+						<SearchResults pokemons={pokemons} onCardClick={handleCardClick} />
+						<Pagination
+							currentPage={currentPage}
+							totalPages={Math.ceil(pokemons.length / 20)}
+							onPageChange={handlePageChange}
+						/>
+					</div>
+					{selectedPokemon && (
+						<div className={styles.detailsSection}>
+							<button onClick={handleCloseDetails}>Close</button>
+							{isDetailsLoading ? (
+								<Loader />
+							) : (
+								<DetailedCard pokemon={selectedPokemon} />
+							)}
+						</div>
+					)}
 				</div>
 			)}
 			<img src={pikachuGif} alt="Pikachu" className={styles.fixedGif} />

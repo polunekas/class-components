@@ -1,22 +1,16 @@
-.searchBarContainer {
-  display: flex;
-  justify-content: center;
-  margin: 20px;
-}
-
-.input {
+.detailedCard {
   padding: 10px;
-  width: 300px;
+  background: #f9f9f9;
+  border-radius: 8px;
   border: 1px solid #ddd;
-  border-radius: 4px;
 }
 
-.button {
+button {
   padding: 10px;
-  margin-left: 10px;
   border: none;
   background-color: #007bff;
   color: white;
   cursor: pointer;
   border-radius: 4px;
+  margin-bottom: 10px;
 }
