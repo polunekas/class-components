@@ -9,7 +9,6 @@ import DetailedCard from "./components/DetailedCard/DetailedCard";
 import pikachuGif from "./assets/pikachu-pokemon.gif";
 import pokemonHeader from "./assets/pokemon_header.webp";
 import { fetchPokemonData, fetchPokemonsList } from "./api";
-import type { PokemonCard } from "./api";
 
 interface Pokemon {
 	name: string;
@@ -41,6 +40,7 @@ const App: React.FC = () => {
 	const [showPopup, setShowPopup] = useState<boolean>(false);
 	const [throwError, setThrowError] = useState<boolean>(false);
 	const [currentPage, setCurrentPage] = useState<number>(1);
+	const [totalPages, setTotalPages] = useState<number>(0);
 	const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
 	const [isDetailsLoading, setIsDetailsLoading] = useState<boolean>(false);
 	const resultsContainerRef = useRef<HTMLDivElement>(null);
@@ -77,8 +77,9 @@ const App: React.FC = () => {
 				];
 			} else {
 				const offset = (currentPage - 1) * 20;
-				const pokemonCards: PokemonCard[] = await fetchPokemonsList(offset);
-				const pokemonDetailsPromises = pokemonCards.map((pokemon) =>
+				const { results, count } = await fetchPokemonsList(offset);
+				setTotalPages(Math.ceil(count / 20));
+				const pokemonDetailsPromises = results.map((pokemon) =>
 					fetch(pokemon.url).then((response) => response.json()),
 				);
 
@@ -167,6 +168,7 @@ const App: React.FC = () => {
 	const handlePageChange = (page: number) => {
 		setCurrentPage(page);
 		navigate(`/?page=${page}`);
+		handleSearch(searchItem);
 	};
 
 	const handleCardClick = async (pokemon: Pokemon) => {
@@ -260,7 +262,7 @@ const App: React.FC = () => {
 						<SearchResults pokemons={pokemons} onCardClick={handleCardClick} />
 						<Pagination
 							currentPage={currentPage}
-							totalPages={Math.ceil(pokemons.length / 20)}
+							totalPages={totalPages}
 							onPageChange={handlePageChange}
 						/>
 					</div>

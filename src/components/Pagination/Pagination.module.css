@@ -1,21 +1,23 @@
 .paginationContainer {
-  display: flex;
-  justify-content: center;
-  margin: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 20px;
 }
 
-button {
-  margin: 0 5px;
-  padding: 10px;
-  border: 1px solid #007bff;
-  background-color: white;
-  color: #007bff;
-  cursor: pointer;
-  border-radius: 4px;
+.paginationContainer button {
+	margin: 0 5px;
+	padding: 10px 15px;
+	border: none;
+	background-color: #f2f2f2;
+	cursor: pointer;
 }
 
-button.active,
-button:hover {
-  background-color: #007bff;
-  color: white;
+.paginationContainer button.active {
+	background-color: #ffcc00;
+	font-weight: bold;
+}
+
+.ellipsis {
+	margin: 0 5px;
 }
