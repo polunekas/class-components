@@ -15,6 +15,12 @@ interface SearchResultsProps {
 }
 
 const SearchResults: React.FC<SearchResultsProps> = ({ pokemons, onCardClick }) => {
+	const handleKeyPress = (event: React.KeyboardEvent, pokemon: Pokemon) => {
+		if (event.key === "Enter" || event.key === " ") {
+			onCardClick(pokemon);
+		}
+	};
+
 	return (
 		<div className={styles.resultsContainer}>
 			{pokemons.length > 0 ? (
@@ -23,6 +29,10 @@ const SearchResults: React.FC<SearchResultsProps> = ({ pokemons, onCardClick }) 
 						key={index}
 						className={styles.resultItem}
 						onClick={() => onCardClick(result)}
+						onKeyDown={(event) => handleKeyPress(event, result)}
+						role="button"
+						tabIndex={0}
+						aria-label={`Show details for ${result.name}`}
 					>
 						<h3>{result.name[0].toUpperCase() + result.name.slice(1)}</h3>
 						<p>Height: {result.height}</p>

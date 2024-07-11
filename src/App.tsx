@@ -200,6 +200,12 @@ const App: React.FC = () => {
 		navigate(`/?page=${currentPage}`);
 	};
 
+	const handleResultsSectionKeyPress = (event: React.KeyboardEvent) => {
+		if (event.key === "Enter" || event.key === " ") {
+			handleCloseDetails();
+		}
+	};
+
 	if (throwError) {
 		throw new Error("Test error thrown");
 	}
@@ -246,6 +252,10 @@ const App: React.FC = () => {
 						className={styles.resultsSection}
 						ref={resultsContainerRef}
 						onClick={handleCloseDetails}
+						onKeyDown={handleResultsSectionKeyPress}
+						role="button"
+						tabIndex={0}
+						aria-label="Close details section"
 					>
 						<SearchResults pokemons={pokemons} onCardClick={handleCardClick} />
 						<Pagination
