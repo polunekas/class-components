@@ -21,8 +21,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ pokemons, onCardClick, se
 			onCardClick(pokemon);
 		}
 	};
-
-	// Если выполняется поиск, показываем только одну найденную карточку
+	
 	if (searchItem) {
 		return (
 			<div className={styles.resultsContainer}>

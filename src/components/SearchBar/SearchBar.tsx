@@ -20,8 +20,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ fromSearch }) => {
 		if (fromSearch) {
 			fromSearch(trimmedSearchItem);
 		}
-		setSearchItem(trimmedSearchItem); // Сохранение полного слова в localStorage
-		setInputValue(""); // Очистка поля поиска после поиска
+		setSearchItem(trimmedSearchItem);
+		setInputValue("");
 	};
 
 	const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {

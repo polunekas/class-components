@@ -28,7 +28,7 @@ const App: React.FC = () => {
 		async (searchItem: string, page = 1) => {
 			setError(null);
 			setIsLoading(true);
-			console.log(`handleSearch called with searchItem: ${searchItem}, page: ${page}`);
+			console.log(`handleSearch called with searchItem: "${searchItem}", page: ${page}`);
 
 			try {
 				let pokemons: Pokemon[] = [];
@@ -53,12 +53,15 @@ const App: React.FC = () => {
 								: "Not Found",
 						},
 					];
+					console.log("Pokemons fetched by searchItem:", pokemons);
 				} else {
 					const offset = (page - 1) * 20;
 					const { results, count } = await fetchPokemonsList(offset);
 					setTotalPages(Math.ceil(count / 20));
+					console.log("Total Pokemons count:", count);
+
 					const pokemonDetailsPromises = results.map(async (pokemon, index) => {
-						await new Promise((resolve) => setTimeout(resolve, index * 100)); // Задержка между запросами
+						await new Promise((resolve) => setTimeout(resolve, index * 100));
 						const response = await fetch(pokemon.url);
 						if (!response.ok) {
 							throw new Error(`Failed to fetch details for ${pokemon.name}`);
@@ -85,6 +88,7 @@ const App: React.FC = () => {
 								.join(", ")
 							: "Not Found",
 					}));
+					console.log("Pokemons fetched by page:", pokemons);
 				}
 
 				setPokemons(pokemons);
@@ -99,6 +103,7 @@ const App: React.FC = () => {
 							top: foundIndex * 100,
 							behavior: "smooth",
 						});
+						console.log(`Scrolled to pokemon: ${searchItem} at index ${foundIndex}`);
 					}
 				}
 			} catch (error) {
@@ -132,7 +137,7 @@ const App: React.FC = () => {
 					.map((type: { type: { name: string } }) => type.type.name)
 					.join(", "),
 			});
-			localStorage.setItem("searchItem", data.name); // Сохранение полного имени покемона в localStorage
+			localStorage.setItem("searchItem", data.name);
 		} catch (error) {
 			console.error(error);
 			setError("Failed to fetch details");
@@ -146,6 +151,11 @@ const App: React.FC = () => {
 		const page = parseInt(params.get("page") || "1", 10);
 		const details = params.get("details");
 
+		console.log("useEffect triggered");
+		console.log("Current page:", page);
+		console.log("Current details:", details);
+		console.log("Current searchItem:", searchItem);
+
 		if (page !== currentPage) {
 			console.log(`Updating URL to match currentPage: ${currentPage}`);
 			navigate(`/?page=${currentPage}`, { replace: true });
@@ -153,12 +163,12 @@ const App: React.FC = () => {
 
 		if (details) {
 			handleCardClick({ name: details, height: 0, weight: 0, abilities: "", types: "" });
-		} else if (searchItem) {
-			handleSearch(searchItem, page);
 		} else {
+			console.log("Handling search with empty searchItem");
 			handleSearch("", page);
 		}
 	}, [currentPage, navigate, location.search, handleCardClick, handleSearch, searchItem]);
+
 
 	const triggerError = () => {
 		setThrowError(true);
