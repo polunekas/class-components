@@ -19,7 +19,9 @@ const DetailedCard: React.FC<DetailedCardProps> = ({ pokemon, onClose }) => {
 
 	return (
 		<div className={styles.detailedCard}>
-			<button className={styles.closeButton} onClick={onClose}>Close</button>
+			<button onClick={onClose} className={styles.closeButton}>
+				Close
+			</button>
 			<h2>{pokemon.name[0].toUpperCase() + pokemon.name.slice(1)}</h2>
 			<p>Height: {pokemon.height}</p>
 			<p>Weight: {pokemon.weight}</p>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useLocation, useNavigate, Outlet } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./App.module.css";
 import SearchBar from "./components/SearchBar/SearchBar";
 import SearchResults from "./components/SearchResults/SearchResults";
@@ -19,7 +19,6 @@ const App: React.FC = () => {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPages, setTotalPages] = useState<number>(0);
 	const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
-	const [isDetailsLoading, setIsDetailsLoading] = useState<boolean>(false);
 	const resultsContainerRef = useRef<HTMLDivElement>(null);
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -116,7 +115,6 @@ const App: React.FC = () => {
 	);
 
 	const handleCardClick = useCallback(async (pokemon: Pokemon) => {
-		setIsDetailsLoading(true);
 		setSelectedPokemon(null);
 		navigate(`/?page=${currentPage}&details=${pokemon.name}`);
 
@@ -137,8 +135,6 @@ const App: React.FC = () => {
 		} catch (error) {
 			console.error(error);
 			setError("Failed to fetch details");
-		} finally {
-			setIsDetailsLoading(false);
 		}
 	}, [currentPage, navigate]);
 
