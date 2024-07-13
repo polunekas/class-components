@@ -31,7 +31,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 	render(): ReactNode {
 		if (this.state.hasError) {
 			return (
-				<div>
+				<div className={styles.errorWrapper}>
 					<h1>Something went wrong.</h1>
 					<button className={styles.reloadButton} onClick={this.handleReload}>
 						Reload

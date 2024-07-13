@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Outlet } from "react-router-dom";
 import styles from "./App.module.css";
 import SearchBar from "./components/SearchBar/SearchBar";
 import SearchResults from "./components/SearchResults/SearchResults";
@@ -166,7 +165,6 @@ const App: React.FC = () => {
 		}
 	}, [currentPage, navigate, location.search, handleCardClick, handleSearch, searchItem]);
 
-
 	const triggerError = () => {
 		setThrowError(true);
 	};
@@ -212,10 +210,10 @@ const App: React.FC = () => {
 			) : (
 				<div className={styles.content}>
 					<div
-						className={`${styles.resultsSection} ${selectedPokemon ? styles.resultsSectionWithDetails : ''}`}
+						className={styles.resultsSection}
 						ref={resultsContainerRef}
-						onClick={selectedPokemon ? handleCloseDetails : undefined}
-						onKeyDown={selectedPokemon ? handleResultsSectionKeyPress : undefined}
+						onClick={handleCloseDetails}
+						onKeyDown={handleResultsSectionKeyPress}
 						role="button"
 						tabIndex={0}
 						aria-label="Close details section"
@@ -229,9 +227,7 @@ const App: React.FC = () => {
 					</div>
 					{selectedPokemon && (
 						<div className={styles.detailsSection}>
-							{isDetailsLoading ? <Loader /> : (
-								<DetailedCard pokemon={selectedPokemon} onClose={handleCloseDetails} />
-							)}
+							<DetailedCard pokemon={selectedPokemon} onClose={handleCloseDetails} />
 						</div>
 					)}
 				</div>
