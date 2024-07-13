@@ -15,7 +15,9 @@
 }
 
 .headerLogo {
-  height: 80px;
+  height: 100px;
+  margin: auto;
+  padding-left: 70px;
 }
 
 .descriptionButton,

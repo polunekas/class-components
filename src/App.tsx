@@ -209,33 +209,10 @@ const App: React.FC = () => {
 		<div id="root" className={styles.root}>
 			<header className={styles.header}>
 				<img src={pokemonHeader} alt="Pokemon" className={styles.headerLogo} />
-				<button className={styles.descriptionButton} onClick={togglePopup}>
-					How to use
-				</button>
 				<button className={styles.errorButton} onClick={triggerError}>
 					Throw Error
 				</button>
 			</header>
-			{showPopup && (
-				<>
-					<div
-						className={styles.overlay}
-						role="button"
-						tabIndex={0}
-						onClick={togglePopup}
-						onKeyDown={handleKeyPress}
-						aria-label="Close popup"
-					></div>
-					<dialog open className={`${styles.popup} ${styles.fadeIn}`}>
-						<h2>How to use the search</h2>
-						<p>Type the name of a Pokémon and click Search or press Enter.</p>
-						<p>Example: pikachu</p>
-						<button className={styles.closeButton} onClick={togglePopup}>
-							Close
-						</button>
-					</dialog>
-				</>
-			)}
 			<SearchBar fromSearch={handleSearch} />
 			{isLoading ? (
 				<Loader />
