@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import DetailedCard from '../DetailedCard';
 
 const mockPokemon = {
@@ -7,21 +7,21 @@ const mockPokemon = {
 	height: 4,
 	weight: 60,
 	abilities: 'static, lightning-rod',
-	types: 'electric',
+	types: 'electric'
 };
 
-describe('DetailedCard component', () => {
-	test('displays detailed card data', () => {
-		render(<DetailedCard pokemon={mockPokemon} />);
-		expect(screen.getByText(/pikachu/i)).toBeInTheDocument();
-		expect(screen.getByText(/Height: 4/i)).toBeInTheDocument();
-		expect(screen.getByText(/Weight: 60/i)).toBeInTheDocument();
-		expect(screen.getByText(/Abilities: static, lightning-rod/i)).toBeInTheDocument();
-		expect(screen.getByText(/Types: electric/i)).toBeInTheDocument();
+describe('DetailedCard', () => {
+	it('renders pokemon details correctly', () => {
+		const { getByText } = render(<DetailedCard pokemon={mockPokemon} onClose={() => { }} />);
+		expect(getByText(/pikachu/i)).toBeInTheDocument();
+		expect(getByText(/Height: 4/i)).toBeInTheDocument();
+		expect(getByText(/Weight: 60/i)).toBeInTheDocument();
+		expect(getByText(/Abilities: static, lightning-rod/i)).toBeInTheDocument();
+		expect(getByText(/Types: electric/i)).toBeInTheDocument();
 	});
 
-	test('renders nothing when pokemon data is not provided', () => {
-		const { container } = render(<DetailedCard pokemon={null} />);
+	it('renders nothing when no pokemon is provided', () => {
+		const { container } = render(<DetailedCard pokemon={null} onClose={() => { }} />);
 		expect(container.firstChild).toBeNull();
 	});
 });
