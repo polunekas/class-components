@@ -1,4 +1,4 @@
-import React, { type ChangeEvent, type FormEvent, useState } from "react";
+import React, { type ChangeEvent, type FormEvent, useState, useEffect } from "react";
 import useSearchItem from "../../hooks/useSearchItem";
 import styles from "./SearchBar.module.css";
 
@@ -8,19 +8,20 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ fromSearch }) => {
 	const [searchItem, setSearchItem] = useSearchItem();
+	const [inputValue, setInputValue] = useState(searchItem);
 	const [placeholder, setPlaceholder] = useState(searchItem ? "" : "pikachu");
-	const [showAlert, setShowAlert] = useState(false);
 
 	const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-		setSearchItem(event.target.value);
+		setInputValue(event.target.value);
 	};
 
 	const handleSearch = () => {
-		const trimmedSearchItem = searchItem.trim();
-
+		const trimmedSearchItem = inputValue.trim();
 		if (fromSearch) {
 			fromSearch(trimmedSearchItem);
 		}
+		setSearchItem(trimmedSearchItem); // Сохранение полного слова в localStorage
+		setInputValue(""); // Очистка поля поиска после поиска
 	};
 
 	const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -32,18 +33,17 @@ const SearchBar: React.FC<SearchBarProps> = ({ fromSearch }) => {
 		setPlaceholder("");
 	};
 
-	const closeAlert = () => {
-		setShowAlert(false);
-	};
+	useEffect(() => {
+		if (inputValue === "") {
+			setSearchItem("");
+		}
+	}, [inputValue, setSearchItem]);
 
 	return (
-		<form
-			onSubmit={handleFormSubmit}
-			className={styles.searchBarContainer}
-		>
+		<form onSubmit={handleFormSubmit} className={styles.searchBarContainer}>
 			<input
 				type="text"
-				value={searchItem}
+				value={inputValue}
 				onChange={handleInputChange}
 				placeholder={placeholder}
 				onFocus={handleFocus}
@@ -52,17 +52,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ fromSearch }) => {
 			<button type="submit" className={styles.button}>
 				Search
 			</button>
-			{showAlert && (
-				<div className={styles.alert}>
-					<p>Please enter a search term.</p>
-					<button
-						onClick={closeAlert}
-						className={styles.closeAlertButton}
-					>
-						Close
-					</button>
-				</div>
-			)}
 		</form>
 	);
 };

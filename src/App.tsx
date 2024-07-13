@@ -10,22 +10,8 @@ import pikachuGif from "./assets/pikachu-pokemon.gif";
 import pokemonHeader from "./assets/pokemon_header.webp";
 import { fetchPokemonData, fetchPokemonsList } from "./api";
 
-const useSearchItem = () => {
-	const [searchItem] = useState<string>(() => {
-		return localStorage.getItem("searchItem") || "";
-	});
-
-	useEffect(() => {
-		return () => {
-			localStorage.setItem("searchItem", searchItem);
-		};
-	}, [searchItem]);
-
-	return [searchItem] as const;
-};
-
 const App: React.FC = () => {
-	const [searchItem] = useSearchItem();
+	const [searchItem, setSearchItem] = useState<string>(() => localStorage.getItem("searchItem") || "");
 	const [pokemons, setPokemons] = useState<Pokemon[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -132,16 +118,21 @@ const App: React.FC = () => {
 	useEffect(() => {
 		const params = new URLSearchParams(location.search);
 		const page = parseInt(params.get("page") || "1", 10);
+		const details = params.get("details");
+
 		if (page !== currentPage) {
 			console.log(`Updating URL to match currentPage: ${currentPage}`);
 			navigate(`/?page=${currentPage}`, { replace: true });
 		}
-	}, [currentPage, navigate, location.search]);
 
-	useEffect(() => {
-		console.log(`currentPage changed to: ${currentPage}`);
-		handleSearch(searchItem, currentPage);
-	}, [currentPage, searchItem, handleSearch]);
+		if (details) {
+			handleCardClick({ name: details, height: 0, weight: 0, abilities: "", types: "" });
+		} else if (searchItem) {
+			handleSearch(searchItem, page);
+		} else {
+			handleSearch("", page);
+		}
+	}, [currentPage, navigate, location.search]);
 
 	const togglePopup = () => {
 		setShowPopup((prev) => !prev);
@@ -182,6 +173,7 @@ const App: React.FC = () => {
 					.map((type: { type: { name: string } }) => type.type.name)
 					.join(", "),
 			});
+			localStorage.setItem("searchItem", data.name); // Сохранение полного имени покемона в localStorage
 		} catch (error) {
 			console.error(error);
 			setError("Failed to fetch details");
@@ -213,7 +205,10 @@ const App: React.FC = () => {
 					Throw Error
 				</button>
 			</header>
-			<SearchBar fromSearch={handleSearch} />
+			<SearchBar fromSearch={(searchItem) => {
+				setCurrentPage(1);
+				handleSearch(searchItem, 1);
+			}} />
 			{isLoading ? (
 				<Loader />
 			) : error ? (
