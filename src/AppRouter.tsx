@@ -1,15 +1,13 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import App from "./App";
 import NotFound from "./components/NotFound/NotFound";
 
 const AppRouter: React.FC = () => (
-  <Router>
-    <Routes>
-      <Route path="/" element={<App />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  </Router>
+  <Routes>
+    <Route path="/" element={<App />} />
+    <Route path="*" element={<NotFound />} />
+  </Routes>
 );
 
 export default AppRouter;

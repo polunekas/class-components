@@ -38,7 +38,11 @@ const Pagination: React.FC<PaginationProps> = ({
 				<React.Fragment key={page}>
 					<button
 						className={currentPage === page ? styles.active : ""}
-						onClick={() => onPageChange(page)}
+						onClick={() => {
+							console.log(`Button clicked: ${page}`);
+							onPageChange(page);
+						}}
+						style={{ cursor: 'pointer' }}
 					>
 						{page}
 					</button>

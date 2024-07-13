@@ -12,14 +12,42 @@ interface Pokemon {
 interface SearchResultsProps {
 	pokemons: Pokemon[];
 	onCardClick: (pokemon: Pokemon) => void;
+	searchItem: string;
 }
 
-const SearchResults: React.FC<SearchResultsProps> = ({ pokemons, onCardClick }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ pokemons, onCardClick, searchItem }) => {
 	const handleKeyPress = (event: React.KeyboardEvent, pokemon: Pokemon) => {
 		if (event.key === "Enter" || event.key === " ") {
 			onCardClick(pokemon);
 		}
 	};
+
+	// Если выполняется поиск, показываем только одну найденную карточку
+	if (searchItem) {
+		return (
+			<div className={styles.resultsContainer}>
+				{pokemons.length > 0 ? (
+					<div
+						key={pokemons[0].name}
+						className={styles.resultItem}
+						onClick={() => onCardClick(pokemons[0])}
+						onKeyDown={(event) => handleKeyPress(event, pokemons[0])}
+						role="button"
+						tabIndex={0}
+						aria-label={`Show details for ${pokemons[0].name}`}
+					>
+						<h3>{pokemons[0].name[0].toUpperCase() + pokemons[0].name.slice(1)}</h3>
+						<p>Height: {pokemons[0].height}</p>
+						<p>Weight: {pokemons[0].weight}</p>
+						<p>Abilities: {pokemons[0].abilities}</p>
+						<p>Types: {pokemons[0].types}</p>
+					</div>
+				) : (
+					<p>No pokemons found</p>
+				)}
+			</div>
+		);
+	}
 
 	return (
 		<div className={styles.resultsContainer}>

@@ -10,16 +10,8 @@ import pikachuGif from "./assets/pikachu-pokemon.gif";
 import pokemonHeader from "./assets/pokemon_header.webp";
 import { fetchPokemonData, fetchPokemonsList } from "./api";
 
-interface Pokemon {
-	name: string;
-	height: number;
-	weight: number;
-	abilities: string;
-	types: string;
-}
-
 const useSearchItem = () => {
-	const [searchItem, setSearchItem] = useState<string>(() => {
+	const [searchItem] = useState<string>(() => {
 		return localStorage.getItem("searchItem") || "";
 	});
 
@@ -29,11 +21,11 @@ const useSearchItem = () => {
 		};
 	}, [searchItem]);
 
-	return [searchItem, setSearchItem] as const;
+	return [searchItem] as const;
 };
 
 const App: React.FC = () => {
-	const [searchItem, setSearchItem] = useSearchItem();
+	const [searchItem] = useSearchItem();
 	const [pokemons, setPokemons] = useState<Pokemon[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -47,24 +39,58 @@ const App: React.FC = () => {
 	const location = useLocation();
 	const navigate = useNavigate();
 
-	const handleSearch = useCallback(async (searchItem: string) => {
-		setError(null);
-		setIsLoading(true);
+	const handleSearch = useCallback(
+		async (searchItem: string, page = 1) => {
+			setError(null);
+			setIsLoading(true);
+			console.log(`handleSearch called with searchItem: ${searchItem}, page: ${page}`);
 
-		try {
-			let pokemons: Pokemon[] = [];
-			if (searchItem) {
-				const data = await fetchPokemonData(searchItem);
-				pokemons = [
-					{
+			try {
+				let pokemons: Pokemon[] = [];
+				if (searchItem) {
+					const data = await fetchPokemonData(searchItem);
+					pokemons = [
+						{
+							name: data.name || "Not Found",
+							height: data.height || "Not Found",
+							weight: data.weight || "Not Found",
+							abilities: data.abilities
+								? data.abilities
+									.map(
+										(ability: { ability: { name: string } }) => ability.ability.name
+									)
+									.join(", ")
+								: "Not Found",
+							types: data.types
+								? data.types
+									.map((type: { type: { name: string } }) => type.type.name)
+									.join(", ")
+								: "Not Found",
+						},
+					];
+				} else {
+					const offset = (page - 1) * 20;
+					const { results, count } = await fetchPokemonsList(offset);
+					setTotalPages(Math.ceil(count / 20));
+					const pokemonDetailsPromises = results.map(async (pokemon, index) => {
+						await new Promise((resolve) => setTimeout(resolve, index * 100)); // Задержка между запросами
+						const response = await fetch(pokemon.url);
+						if (!response.ok) {
+							throw new Error(`Failed to fetch details for ${pokemon.name}`);
+						}
+						return response.json();
+					});
+
+					const detailedData = await Promise.all(pokemonDetailsPromises);
+
+					pokemons = detailedData.map((data) => ({
 						name: data.name || "Not Found",
 						height: data.height || "Not Found",
 						weight: data.weight || "Not Found",
 						abilities: data.abilities
 							? data.abilities
 								.map(
-									(ability: { ability: { name: string } }) =>
-										ability.ability.name,
+									(ability: { ability: { name: string } }) => ability.ability.name
 								)
 								.join(", ")
 							: "Not Found",
@@ -73,83 +99,49 @@ const App: React.FC = () => {
 								.map((type: { type: { name: string } }) => type.type.name)
 								.join(", ")
 							: "Not Found",
-					},
-				];
-			} else {
-				const offset = (currentPage - 1) * 20;
-				const { results, count } = await fetchPokemonsList(offset);
-				setTotalPages(Math.ceil(count / 20));
-				const pokemonDetailsPromises = results.map((pokemon) =>
-					fetch(pokemon.url).then((response) => response.json()),
-				);
-
-				const detailedData = await Promise.all(pokemonDetailsPromises);
-
-				pokemons = detailedData.map((data) => ({
-					name: data.name || "Not Found",
-					height: data.height || "Not Found",
-					weight: data.weight || "Not Found",
-					abilities: data.abilities
-						? data.abilities
-							.map(
-								(ability: { ability: { name: string } }) =>
-									ability.ability.name,
-							)
-							.join(", ")
-						: "Not Found",
-					types: data.types
-						? data.types
-							.map((type: { type: { name: string } }) => type.type.name)
-							.join(", ")
-						: "Not Found",
-				}));
-			}
-
-			setPokemons(pokemons);
-			setIsLoading(false);
-
-			if (searchItem) {
-				const foundIndex = pokemons.findIndex(
-					(pokemon) => pokemon.name === searchItem.toLowerCase(),
-				);
-				if (foundIndex !== -1 && resultsContainerRef.current) {
-					resultsContainerRef.current.scrollTo({
-						top: foundIndex * 100,
-						behavior: "smooth",
-					});
+					}));
 				}
-			}
-		} catch (error) {
-			console.error(error);
-			if (error instanceof Error) {
-				setError(error.message);
-			} else {
-				setError("An unknown error occurred");
-			}
-			setIsLoading(false);
-		}
-	}, [currentPage]);
 
-	useEffect(() => {
-		const savedSearchItem = localStorage.getItem("searchItem");
-		if (savedSearchItem) {
-			setSearchItem(savedSearchItem);
-		} else {
-			setSearchItem("");
-		}
-	}, [setSearchItem]);
+				setPokemons(pokemons);
+				setIsLoading(false);
 
-	useEffect(() => {
-		if (searchItem !== "") {
-			handleSearch(searchItem);
-		}
-	}, [searchItem, handleSearch]);
+				if (searchItem) {
+					const foundIndex = pokemons.findIndex(
+						(pokemon) => pokemon.name === searchItem.toLowerCase()
+					);
+					if (foundIndex !== -1 && resultsContainerRef.current) {
+						resultsContainerRef.current.scrollTo({
+							top: foundIndex * 100,
+							behavior: "smooth",
+						});
+					}
+				}
+			} catch (error) {
+				console.error(error);
+				if (error instanceof Error) {
+					setError(error.message);
+				} else {
+					setError("An unknown error occurred");
+				}
+				setIsLoading(false);
+			}
+		},
+		[]
+	);
 
 	useEffect(() => {
 		const params = new URLSearchParams(location.search);
 		const page = parseInt(params.get("page") || "1", 10);
-		setCurrentPage(page);
-	}, [location.search]);
+		if (page !== currentPage) {
+			console.log(`Updating URL to match currentPage: ${currentPage}`);
+			navigate(`/?page=${currentPage}`, { replace: true });
+		}
+	}, [currentPage, navigate, location.search]);
+
+	useEffect(() => {
+		console.log(`currentPage changed to: ${currentPage}`);
+		handleSearch(searchItem, currentPage);
+	}, [currentPage, searchItem, handleSearch]);
 
 	const togglePopup = () => {
 		setShowPopup((prev) => !prev);
@@ -166,9 +158,10 @@ const App: React.FC = () => {
 	};
 
 	const handlePageChange = (page: number) => {
-		setCurrentPage(page);
-		navigate(`/?page=${page}`);
-		handleSearch(searchItem);
+		console.log(`handlePageChange called with page: ${page}, currentPage: ${currentPage}`);
+		if (page !== currentPage) {
+			setCurrentPage(page);
+		}
 	};
 
 	const handleCardClick = async (pokemon: Pokemon) => {
@@ -259,7 +252,7 @@ const App: React.FC = () => {
 						tabIndex={0}
 						aria-label="Close details section"
 					>
-						<SearchResults pokemons={pokemons} onCardClick={handleCardClick} />
+						<SearchResults pokemons={pokemons} onCardClick={handleCardClick} searchItem={searchItem} />
 						<Pagination
 							currentPage={currentPage}
 							totalPages={totalPages}
