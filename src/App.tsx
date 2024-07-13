@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Outlet } from "react-router-dom";
 import styles from "./App.module.css";
 import SearchBar from "./components/SearchBar/SearchBar";
 import SearchResults from "./components/SearchResults/SearchResults";
 import Loader from "./components/Loader/Loader";
 import Pagination from "./components/Pagination/Pagination";
-import DetailedCard from "./components/DetailedCard/DetailedCard";
 import pikachuGif from "./assets/pikachu-pokemon.gif";
 import pokemonHeader from "./assets/pokemon_header.webp";
 import { fetchPokemonData, fetchPokemonsList } from "./api";
@@ -18,8 +17,8 @@ const App: React.FC = () => {
 	const [throwError, setThrowError] = useState<boolean>(false);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPages, setTotalPages] = useState<number>(0);
-	const [selectedPokemon, setSelectedPokemon] = useState<Pokemon | null>(null);
-	const [isDetailsLoading, setIsDetailsLoading] = useState<boolean>(false);
+	const [setSelectedPokemon] = useState<Pokemon | null>(null);
+	const [setIsDetailsLoading] = useState<boolean>(false);
 	const resultsContainerRef = useRef<HTMLDivElement>(null);
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -41,9 +40,7 @@ const App: React.FC = () => {
 							weight: data.weight || "Not Found",
 							abilities: data.abilities
 								? data.abilities
-									.map(
-										(ability: { ability: { name: string } }) => ability.ability.name
-									)
+									.map((ability: { ability: { name: string } }) => ability.ability.name)
 									.join(", ")
 								: "Not Found",
 							types: data.types
@@ -77,9 +74,7 @@ const App: React.FC = () => {
 						weight: data.weight || "Not Found",
 						abilities: data.abilities
 							? data.abilities
-								.map(
-									(ability: { ability: { name: string } }) => ability.ability.name
-								)
+								.map((ability: { ability: { name: string } }) => ability.ability.name)
 								.join(", ")
 							: "Not Found",
 						types: data.types
@@ -144,7 +139,7 @@ const App: React.FC = () => {
 		} finally {
 			setIsDetailsLoading(false);
 		}
-	}, [currentPage, navigate]);
+	}, [currentPage, navigate, setIsDetailsLoading, setSelectedPokemon]);
 
 	useEffect(() => {
 		const params = new URLSearchParams(location.search);
@@ -230,16 +225,7 @@ const App: React.FC = () => {
 							onPageChange={handlePageChange}
 						/>
 					</div>
-					{selectedPokemon && (
-						<div className={styles.detailsSection}>
-							<button onClick={handleCloseDetails}>Close</button>
-							{isDetailsLoading ? (
-								<Loader />
-							) : (
-								<DetailedCard pokemon={selectedPokemon} />
-							)}
-						</div>
-					)}
+					<Outlet />
 				</div>
 			)}
 			<img src={pikachuGif} alt="Pikachu" className={styles.fixedGif} />
