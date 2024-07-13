@@ -11,11 +11,10 @@ import pokemonHeader from "./assets/pokemon_header.webp";
 import { fetchPokemonData, fetchPokemonsList } from "./api";
 
 const App: React.FC = () => {
-	const [searchItem, setSearchItem] = useState<string>(() => localStorage.getItem("searchItem") || "");
+	const [searchItem] = useState<string>(() => localStorage.getItem("searchItem") || "");
 	const [pokemons, setPokemons] = useState<Pokemon[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const [showPopup, setShowPopup] = useState<boolean>(false);
 	const [throwError, setThrowError] = useState<boolean>(false);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [totalPages, setTotalPages] = useState<number>(0);
@@ -115,47 +114,7 @@ const App: React.FC = () => {
 		[]
 	);
 
-	useEffect(() => {
-		const params = new URLSearchParams(location.search);
-		const page = parseInt(params.get("page") || "1", 10);
-		const details = params.get("details");
-
-		if (page !== currentPage) {
-			console.log(`Updating URL to match currentPage: ${currentPage}`);
-			navigate(`/?page=${currentPage}`, { replace: true });
-		}
-
-		if (details) {
-			handleCardClick({ name: details, height: 0, weight: 0, abilities: "", types: "" });
-		} else if (searchItem) {
-			handleSearch(searchItem, page);
-		} else {
-			handleSearch("", page);
-		}
-	}, [currentPage, navigate, location.search]);
-
-	const togglePopup = () => {
-		setShowPopup((prev) => !prev);
-	};
-
-	const triggerError = () => {
-		setThrowError(true);
-	};
-
-	const handleKeyPress = (event: React.KeyboardEvent) => {
-		if (event.key === "Enter" || event.key === " ") {
-			togglePopup();
-		}
-	};
-
-	const handlePageChange = (page: number) => {
-		console.log(`handlePageChange called with page: ${page}, currentPage: ${currentPage}`);
-		if (page !== currentPage) {
-			setCurrentPage(page);
-		}
-	};
-
-	const handleCardClick = async (pokemon: Pokemon) => {
+	const handleCardClick = useCallback(async (pokemon: Pokemon) => {
 		setIsDetailsLoading(true);
 		setSelectedPokemon(null);
 		navigate(`/?page=${currentPage}&details=${pokemon.name}`);
@@ -179,6 +138,36 @@ const App: React.FC = () => {
 			setError("Failed to fetch details");
 		} finally {
 			setIsDetailsLoading(false);
+		}
+	}, [currentPage, navigate]);
+
+	useEffect(() => {
+		const params = new URLSearchParams(location.search);
+		const page = parseInt(params.get("page") || "1", 10);
+		const details = params.get("details");
+
+		if (page !== currentPage) {
+			console.log(`Updating URL to match currentPage: ${currentPage}`);
+			navigate(`/?page=${currentPage}`, { replace: true });
+		}
+
+		if (details) {
+			handleCardClick({ name: details, height: 0, weight: 0, abilities: "", types: "" });
+		} else if (searchItem) {
+			handleSearch(searchItem, page);
+		} else {
+			handleSearch("", page);
+		}
+	}, [currentPage, navigate, location.search, handleCardClick, handleSearch, searchItem]);
+
+	const triggerError = () => {
+		setThrowError(true);
+	};
+
+	const handlePageChange = (page: number) => {
+		console.log(`handlePageChange called with page: ${page}, currentPage: ${currentPage}`);
+		if (page !== currentPage) {
+			setCurrentPage(page);
 		}
 	};
 
