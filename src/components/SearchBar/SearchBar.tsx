@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react';
+import React, { type ChangeEvent, type FormEvent, useState, useEffect } from 'react';
 import useSearchItem from '../../hooks/useSearchItem';
 import styles from './SearchBar.module.css';
 
