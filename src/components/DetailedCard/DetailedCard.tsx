@@ -11,9 +11,10 @@ interface Pokemon {
 
 interface DetailedCardProps {
 	pokemon: Pokemon | null;
+	onClose: () => void;
 }
 
-const DetailedCard: React.FC<DetailedCardProps> = ({ pokemon }) => {
+const DetailedCard: React.FC<DetailedCardProps> = ({ pokemon, onClose }) => {
 	if (!pokemon) return null;
 
 	return (
@@ -23,6 +24,7 @@ const DetailedCard: React.FC<DetailedCardProps> = ({ pokemon }) => {
 			<p>Weight: {pokemon.weight}</p>
 			<p>Abilities: {pokemon.abilities}</p>
 			<p>Types: {pokemon.types}</p>
+			<button onClick={onClose} className={styles.closeButton}>Close</button>
 		</div>
 	);
 };

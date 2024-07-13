@@ -21,7 +21,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ pokemons, onCardClick, se
 			onCardClick(pokemon);
 		}
 	};
-	
+
 	if (searchItem) {
 		return (
 			<div className={styles.resultsContainer}>
