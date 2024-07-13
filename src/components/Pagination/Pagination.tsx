@@ -1,5 +1,5 @@
-import React from "react";
-import styles from "./Pagination.module.css";
+import React from 'react';
+import styles from './Pagination.module.css';
 
 interface PaginationProps {
 	currentPage: number;
@@ -7,11 +7,7 @@ interface PaginationProps {
 	onPageChange: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({
-	currentPage,
-	totalPages,
-	onPageChange,
-}) => {
+const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
 	const getPages = () => {
 		const pages = [];
 		if (totalPages <= 5) {
@@ -37,11 +33,8 @@ const Pagination: React.FC<PaginationProps> = ({
 			{pages.map((page, index) => (
 				<React.Fragment key={page}>
 					<button
-						className={currentPage === page ? styles.active : ""}
-						onClick={() => {
-							console.log(`Button clicked: ${page}`);
-							onPageChange(page);
-						}}
+						className={currentPage === page ? styles.active : ''}
+						onClick={() => onPageChange(page)}
 						style={{ cursor: 'pointer' }}
 					>
 						{page}

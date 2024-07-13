@@ -1,6 +1,6 @@
-import React, { type ChangeEvent, type FormEvent, useState, useEffect } from "react";
-import useSearchItem from "../../hooks/useSearchItem";
-import styles from "./SearchBar.module.css";
+import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react';
+import useSearchItem from '../../hooks/useSearchItem';
+import styles from './SearchBar.module.css';
 
 interface SearchBarProps {
 	fromSearch?: (searchItem: string) => void;
@@ -9,7 +9,7 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({ fromSearch }) => {
 	const [searchItem, setSearchItem] = useSearchItem();
 	const [inputValue, setInputValue] = useState(searchItem);
-	const [placeholder, setPlaceholder] = useState(searchItem ? "" : "pikachu");
+	const [placeholder, setPlaceholder] = useState(searchItem ? '' : 'pikachu');
 
 	const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setInputValue(event.target.value);
@@ -21,7 +21,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ fromSearch }) => {
 			fromSearch(trimmedSearchItem);
 		}
 		setSearchItem(trimmedSearchItem);
-		setInputValue("");
+		setInputValue('');
 	};
 
 	const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -30,12 +30,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ fromSearch }) => {
 	};
 
 	const handleFocus = () => {
-		setPlaceholder("");
+		setPlaceholder('');
 	};
 
 	useEffect(() => {
-		if (inputValue === "") {
-			setSearchItem("");
+		if (inputValue === '') {
+			setSearchItem('');
 		}
 	}, [inputValue, setSearchItem]);
 

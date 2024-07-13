@@ -1,13 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 const useSearchItem = () => {
-	const [searchItem, setSearchItem] = useState<string>(() => {
-		return localStorage.getItem("searchItem") || "";
-	});
+	const [searchItem, setSearchItem] = useState<string>(() => localStorage.getItem('searchItem') || '');
 
 	useEffect(() => {
 		return () => {
-			localStorage.setItem("searchItem", searchItem);
+			localStorage.setItem('searchItem', searchItem);
 		};
 	}, [searchItem]);
 
