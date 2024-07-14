@@ -1,0 +1,19 @@
+.resultsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.resultItem {
+  flex: 1 0 21%;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.resultItem:hover {
+  background-color: #f1f1f1;
+}

@@ -1,0 +1,23 @@
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.paginationContainer button {
+  margin: 0 5px;
+  padding: 10px 15px;
+  border: none;
+  background-color: #f2f2f2;
+  cursor: pointer;
+}
+
+.paginationContainer button.active {
+  background-color: #ffcc00;
+  font-weight: bold;
+}
+
+.ellipsis {
+  margin: 0 5px;
+}
