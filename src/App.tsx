@@ -9,9 +9,10 @@ import DetailedCard from "./components/DetailedCard/DetailedCard";
 import pikachuGif from "./assets/pikachu-pokemon.gif";
 import pokemonHeader from "./assets/pokemon_header.webp";
 import { fetchPokemonData, fetchPokemonsList } from "./api";
+import { type Pokemon } from "./models/Pokemon";
 
 const App: React.FC = () => {
-	const [searchItem] = useState<string>(() => localStorage.getItem("searchItem") || "");
+	const [searchItem, setSearchItem] = useState<string>(() => localStorage.getItem("searchItem") || "");
 	const [pokemons, setPokemons] = useState<Pokemon[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -36,17 +37,13 @@ const App: React.FC = () => {
 					pokemons = [
 						{
 							name: data.name || "Not Found",
-							height: data.height || "Not Found",
-							weight: data.weight || "Not Found",
+							height: data.height || 0,
+							weight: data.weight || 0,
 							abilities: data.abilities
-								? data.abilities
-									.map((ability: { ability: { name: string } }) => ability.ability.name)
-									.join(", ")
+								? data.abilities.map((ability: { ability: { name: string } }) => ability.ability.name).join(", ")
 								: "Not Found",
 							types: data.types
-								? data.types
-									.map((type: { type: { name: string } }) => type.type.name)
-									.join(", ")
+								? data.types.map((type: { type: { name: string } }) => type.type.name).join(", ")
 								: "Not Found",
 						},
 					];
@@ -70,17 +67,13 @@ const App: React.FC = () => {
 
 					pokemons = detailedData.map((data) => ({
 						name: data.name || "Not Found",
-						height: data.height || "Not Found",
-						weight: data.weight || "Not Found",
+						height: data.height || 0,
+						weight: data.weight || 0,
 						abilities: data.abilities
-							? data.abilities
-								.map((ability: { ability: { name: string } }) => ability.ability.name)
-								.join(", ")
+							? data.abilities.map((ability: { ability: { name: string } }) => ability.ability.name).join(", ")
 							: "Not Found",
 						types: data.types
-							? data.types
-								.map((type: { type: { name: string } }) => type.type.name)
-								.join(", ")
+							? data.types.map((type: { type: { name: string } }) => type.type.name).join(", ")
 							: "Not Found",
 					}));
 					console.log("Pokemons fetched by page:", pokemons);
@@ -90,9 +83,7 @@ const App: React.FC = () => {
 				setIsLoading(false);
 
 				if (searchItem) {
-					const foundIndex = pokemons.findIndex(
-						(pokemon) => pokemon.name === searchItem.toLowerCase()
-					);
+					const foundIndex = pokemons.findIndex((pokemon) => pokemon.name === searchItem.toLowerCase());
 					if (foundIndex !== -1 && resultsContainerRef.current) {
 						resultsContainerRef.current.scrollTo({
 							top: foundIndex * 100,
@@ -114,29 +105,30 @@ const App: React.FC = () => {
 		[]
 	);
 
-	const handleCardClick = useCallback(async (pokemon: Pokemon) => {
-		setSelectedPokemon(null);
-		navigate(`/?page=${currentPage}&details=${pokemon.name}`);
+	const handleCardClick = useCallback(
+		async (pokemon: Pokemon) => {
+			setSelectedPokemon(null);
+			navigate(`/?page=${currentPage}&details=${pokemon.name}`);
 
-		try {
-			const data = await fetchPokemonData(pokemon.name);
-			setSelectedPokemon({
-				name: data.name,
-				height: data.height,
-				weight: data.weight,
-				abilities: data.abilities
-					.map((ability: { ability: { name: string } }) => ability.ability.name)
-					.join(", "),
-				types: data.types
-					.map((type: { type: { name: string } }) => type.type.name)
-					.join(", "),
-			});
-			localStorage.setItem("searchItem", data.name);
-		} catch (error) {
-			console.error(error);
-			setError("Failed to fetch details");
-		}
-	}, [currentPage, navigate]);
+			try {
+				const data = await fetchPokemonData(pokemon.name);
+				setSelectedPokemon({
+					name: data.name,
+					height: data.height,
+					weight: data.weight,
+					abilities: data.abilities
+						.map((ability: { ability: { name: string } }) => ability.ability.name)
+						.join(", "),
+					types: data.types.map((type: { type: { name: string } }) => type.type.name).join(", "),
+				});
+				localStorage.setItem("searchItem", data.name);
+			} catch (error) {
+				console.error(error);
+				setError("Failed to fetch details");
+			}
+		},
+		[currentPage, navigate]
+	);
 
 	useEffect(() => {
 		const params = new URLSearchParams(location.search);
